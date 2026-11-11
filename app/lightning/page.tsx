@@ -1,9 +1,11 @@
+'use client';
+
 import React from 'react';
 import { PageShell } from '@/components/layout/PageShell';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { Zap, Network, Globe, Layers, Search, ExternalLink, Bot } from 'lucide-react';
+import { Zap, Network, Globe, Layers, ExternalLink } from 'lucide-react';
+import { NWCWalletManager } from '@/components/lightning/NWCWalletManager';
 
 export default function LightningPage() {
   const acinqPubkey = '03864ef025fde8fb587d989186ce6a4a186895ee44a926bfc370e2c366597a3f8f';
@@ -16,22 +18,25 @@ export default function LightningPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-neutral-100 flex items-center gap-2">
               <Zap className="w-6 h-6 text-amber-400 fill-amber-400/20" />
-              <span>Lightning Network Intelligence</span>
+              <span>Lightning Network & NWC Wallet</span>
             </h1>
-            <Badge variant="btc">Layer 2</Badge>
+            <Badge variant="btc">NIP-47 Live</Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
-            Real-time public statistics, liquidity routing channels, and node rankings powered by Mempool.space.
+            Connect your non-custodial Lightning wallet with Nostr Wallet Connect, inspect balances, and receive payments.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Badge variant="success" className="text-xs py-1">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1"></span>
-            Mempool Lightning API Live
+            NWC Protocol Ready
           </Badge>
         </div>
       </div>
+
+      {/* ⚡ Priority: NWC Interactive Wallet */}
+      <NWCWalletManager />
 
       {/* Network Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

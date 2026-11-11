@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@getalby/sdk": "^9.0.0",
     "@google/generative-ai": "^0.24.1",
     "@mistralai/mistralai": "^3.5.0",
     "@supabase/supabase-js": "^2.119.0",
