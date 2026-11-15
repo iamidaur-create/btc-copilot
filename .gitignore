@@ -21,6 +21,7 @@
 # misc
 .DS_Store
 *.pem
+Btc copilot 1/
 
 # debug
 npm-debug.log*

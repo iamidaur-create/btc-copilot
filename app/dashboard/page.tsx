@@ -69,11 +69,18 @@ export default function DashboardPage() {
 
     try {
       const res = await fetch(`/api/wallet/${encodeURIComponent(address)}`);
-      const json = await res.json();
+      const rawText = await res.text();
+      let json: Record<string, unknown> = {};
+
+      try {
+        json = JSON.parse(rawText) as Record<string, unknown>;
+      } catch {
+        setError(`Server returned status ${res.status}. Please refresh the page.`);
+        return;
+      }
 
       if (!res.ok) {
-        // Our API returned an error (e.g. invalid address, network failure)
-        setError(json.error ?? 'Failed to load wallet data.');
+        setError(typeof json.error === 'string' ? json.error : 'Failed to load wallet data.');
         return;
       }
 
@@ -83,8 +90,22 @@ export default function DashboardPage() {
       // Save for next session
       try {
         localStorage.setItem(STORAGE_KEY, address);
+        // Sync context to AI Assistant and Monitoring pages
+        const context = {
+          walletAddress: (json as WalletApiResponse).address,
+          balance: (json as WalletApiResponse).balance?.total,
+          feeRate: (json as WalletApiResponse).fees?.halfHourFee,
+          transactions: (json as WalletApiResponse).transactions?.slice(0, 10).map((t) => ({
+            txid: t.txid,
+            value: Math.abs(t.netValue),
+            timestamp: t.blockTime ?? Math.floor(Date.now() / 1000),
+            type: t.type === 'outgoing' ? 'outgoing' : 'incoming',
+            confirmed: t.confirmed,
+          })),
+        };
+        sessionStorage.setItem('btc-copilot-context', JSON.stringify(context));
       } catch {
-        // ignore localStorage errors
+        // ignore storage errors
       }
     } catch {
       setError('Could not connect to the server. Please check your internet connection.');
