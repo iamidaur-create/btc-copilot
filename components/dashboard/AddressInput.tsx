@@ -15,10 +15,11 @@
  * 'use client' means this component runs in the browser (it has state and input handling).
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Search, Zap, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { validateBitcoinAddress } from '@/lib/bitcoin/validate-address';
 import { Button } from '@/components/ui/Button';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 // The Satoshi Genesis Block address — used for demonstration
 const DEMO_ADDRESS = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
@@ -33,7 +34,15 @@ interface AddressInputProps {
 }
 
 export function AddressInput({ onAddressSubmit, isLoading = false, currentAddress = '' }: AddressInputProps) {
+  const { t } = useLanguage();
   const [inputValue, setInputValue] = useState(currentAddress);
+
+  // Synchronize input value whenever currentAddress changes (e.g. demo wallet loaded)
+  useEffect(() => {
+    if (currentAddress) {
+      setInputValue(currentAddress);
+    }
+  }, [currentAddress]);
 
   // Validate the current input value (runs every keystroke — fast, no API)
   const validation = inputValue.trim() ? validateBitcoinAddress(inputValue.trim()) : null;
@@ -84,7 +93,7 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Enter a Bitcoin address (1..., 3..., bc1...)"
+            placeholder={t.dashboard.inputPlaceholder}
             className="flex-1 bg-transparent text-sm text-neutral-100 placeholder:text-neutral-600 outline-none font-mono"
             spellCheck={false}
             autoComplete="off"
@@ -104,7 +113,7 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
           disabled={isLoading || !validation?.isValid}
           className="shrink-0"
         >
-          {isLoading ? 'Loading…' : 'Analyze'}
+          {isLoading ? t.dashboard.loadingBtn : t.dashboard.analyzeBtn}
         </Button>
       </form>
 
@@ -126,7 +135,7 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
           className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-[#f7931a] transition-colors disabled:opacity-50"
         >
           <Zap className="w-3 h-3" />
-          Load Demo Wallet (Satoshi Genesis Address)
+          {t.dashboard.loadDemo}
         </button>
         <div className="h-px flex-1 bg-[#1e2230]" />
       </div>

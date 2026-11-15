@@ -23,6 +23,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { RefreshCw, Info, Shield } from 'lucide-react';
 import { PageShell } from '@/components/layout/PageShell';
 import { AddressInput } from '@/components/dashboard/AddressInput';
@@ -32,12 +33,15 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { truncateAddress, formatTimeAgo } from '@/lib/utils/format-btc';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { WalletApiResponse } from '@/app/api/wallet/[address]/route';
 
 const DEMO_ADDRESS = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
 const STORAGE_KEY = 'btc-copilot-last-address';
 
 export default function DashboardPage() {
+  const { t, language } = useLanguage();
+  const router = useRouter();
   const [activeAddress, setActiveAddress] = useState<string>('');
   const [walletData, setWalletData] = useState<WalletApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +88,8 @@ export default function DashboardPage() {
         return;
       }
 
-      setWalletData(json as WalletApiResponse);
+      const data = json as unknown as WalletApiResponse;
+      setWalletData(data);
       setLastFetched(Date.now());
 
       // Save for next session
@@ -92,14 +97,14 @@ export default function DashboardPage() {
         localStorage.setItem(STORAGE_KEY, address);
         // Sync context to AI Assistant and Monitoring pages
         const context = {
-          walletAddress: (json as WalletApiResponse).address,
-          balance: (json as WalletApiResponse).balance?.total,
-          feeRate: (json as WalletApiResponse).fees?.halfHourFee,
-          transactions: (json as WalletApiResponse).transactions?.slice(0, 10).map((t) => ({
+          walletAddress: data.address,
+          balance: data.balance?.total,
+          feeRate: data.fees?.medium,
+          transactions: data.transactions?.slice(0, 10).map((t) => ({
             txid: t.txid,
             value: Math.abs(t.netValue),
             timestamp: t.blockTime ?? Math.floor(Date.now() / 1000),
-            type: t.type === 'outgoing' ? 'outgoing' : 'incoming',
+            type: t.direction === 'out' ? 'outgoing' : 'incoming',
             confirmed: t.confirmed,
           })),
         };
@@ -126,10 +131,10 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#1a1e2b]">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-neutral-100">
-            Wallet Dashboard
+            {t.dashboard.title}
           </h1>
           <p className="text-sm text-neutral-400 mt-1">
-            Enter any Bitcoin address to analyze it. Read-only — no private keys ever.
+            {t.dashboard.subtitle}
           </p>
         </div>
 
@@ -137,12 +142,12 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2">
           {isDemo && (
             <Badge variant="btc" className="text-xs gap-1">
-              🟠 Demo Wallet
+              🟠 {t.topBar.demoWallet}
             </Badge>
           )}
           {walletData && (
             <Badge variant="outline" className="text-xs text-neutral-500">
-              {lastFetched ? `Updated ${formatTimeAgo(lastFetched)}` : 'Live'}
+              {lastFetched ? `${t.dashboard.updated} ${formatTimeAgo(lastFetched)}` : 'Live'}
             </Badge>
           )}
           {activeAddress && (
@@ -154,7 +159,7 @@ export default function DashboardPage() {
               className="gap-2 text-neutral-400"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
+              {t.dashboard.refresh}
             </Button>
           )}
         </div>
@@ -188,7 +193,7 @@ export default function DashboardPage() {
             <Info className="w-8 h-8 text-red-400 mx-auto" />
             <p className="text-red-400 font-medium text-sm">{error}</p>
             <p className="text-neutral-500 text-xs">
-              Check the address is correct and try again.
+              {language === 'fr' ? "Vérifiez que l'adresse est correcte et réessayez." : "Check the address is correct and try again."}
             </p>
           </CardContent>
         </Card>
@@ -201,16 +206,14 @@ export default function DashboardPage() {
             <div className="w-12 h-12 rounded-full bg-[#f7931a]/10 flex items-center justify-center mx-auto">
               <Shield className="w-6 h-6 text-[#f7931a]" />
             </div>
-            <p className="text-neutral-300 font-semibold">No wallet loaded</p>
+            <p className="text-neutral-300 font-semibold">{t.dashboard.noWalletLoaded}</p>
             <p className="text-neutral-500 text-sm max-w-sm mx-auto">
-              Enter a Bitcoin address above or click{' '}
-              <span className="text-[#f7931a]">Load Demo Wallet</span> to explore the
-              Satoshi Genesis address.
+              {t.dashboard.noWalletDesc}
             </p>
             <div className="pt-2">
               <Badge variant="outline" className="text-xs text-neutral-600">
                 <Shield className="w-3 h-3 mr-1" />
-                Read-only · No private keys · No wallet connection required
+                {t.dashboard.readOnlyBadge}
               </Badge>
             </div>
           </CardContent>
@@ -242,8 +245,7 @@ export default function DashboardPage() {
             transactions={walletData.transactions}
             address={walletData.address}
             onExplain={(txid) => {
-              // TODO Milestone 4: navigate to AI assistant with this txid pre-loaded
-              alert(`AI explanation coming in Milestone 4!\n\nTransaction: ${txid}`);
+              router.push(`/assistant?explainTx=${encodeURIComponent(txid)}`);
             }}
           />
         </div>

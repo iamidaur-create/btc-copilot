@@ -73,6 +73,8 @@ export interface WalletApiResponse {
   fetchedAt: string;   // ISO timestamp
 }
 
+export type ApiTransaction = WalletApiResponse['transactions'][number];
+
 // ─── Route Handler ────────────────────────────────────────────────────────────
 
 export async function GET(

@@ -43,27 +43,49 @@ export interface AnomalyAlert {
   acknowledged: boolean;
 }
 
+export type WalletTier = 'small' | 'medium' | 'whale';
+
+/** Determine wallet tier based on rolling mean transaction value */
+export function getWalletTier(meanValue: number): WalletTier {
+  if (meanValue >= 100_000_000) return 'whale'; // >= 1 BTC
+  if (meanValue >= 10_000_000) return 'medium'; // >= 0.1 BTC
+  return 'small'; // < 0.1 BTC
+}
+
+/** Get adaptive anomaly multiplier based on wallet tier */
+export function getAdaptiveMultiplier(tier: WalletTier): number {
+  switch (tier) {
+    case 'small': return 3.0; // 3x for small portfolios (higher sensitivity against drain)
+    case 'medium': return 4.0;
+    case 'whale': return 5.0; // 5x for whale accounts
+  }
+}
+
 // ─── Rule Implementations ─────────────────────────────────────────────────────
 
-/** Rule 1: Large Amount — 5× rolling mean of last 10 txs */
+/** Rule 1: Large Amount — Adaptive multiplier (3x for small, 4x medium, 5x whale) */
 function detectLargeAmount(tx: Transaction, history: Transaction[]): AnomalyAlert | null {
   if (history.length < 3) return null; // not enough history
 
   const recent = history.slice(-10);
   const mean = recent.reduce((sum, t) => sum + t.value, 0) / recent.length;
-  const threshold = mean * 5;
+  const tier = getWalletTier(mean);
+  const multiplier = getAdaptiveMultiplier(tier);
+  const threshold = mean * multiplier;
 
   if (tx.value <= threshold) return null;
+
+  const tierLabel = tier === 'small' ? 'Standard (< 0.1 BTC)' : tier === 'medium' ? 'Intermédiaire (0.1 - 1 BTC)' : 'Whale (> 1 BTC)';
 
   return {
     id: `large-${tx.txid}`,
     type: 'LARGE_AMOUNT',
-    severity: tx.value > mean * 20 ? 'high' : 'medium',
+    severity: tx.value > mean * (multiplier * 2.5) ? 'high' : 'medium',
     txid: tx.txid,
     timestamp: tx.timestamp,
     value: tx.value,
-    description: `Unusual amount: this transaction (${tx.value.toLocaleString()} sats) is significantly larger than your typical activity.`,
-    ruleDetails: `Transaction value ${tx.value} sats is ${(tx.value / mean).toFixed(1)}x the rolling mean of ${mean.toFixed(0)} sats (last ${recent.length} transactions). Threshold: 5x mean.`,
+    description: `Montant inhabituel : transaction (${tx.value.toLocaleString()} sats) nettement supérieure à l'activité habituelle (profil ${tierLabel}).`,
+    ruleDetails: `Valeur ${tx.value} sats = ${(tx.value / mean).toFixed(1)}x la moyenne (${mean.toFixed(0)} sats). Seuil adaptatif : ${multiplier}x pour profil ${tierLabel}.`,
     acknowledged: false,
   };
 }
@@ -107,7 +129,7 @@ function detectDustAttack(tx: Transaction): AnomalyAlert | null {
   };
 }
 
-/** Rule 4: Rapid Outflow — 3+ outgoing txs in 60 minutes */
+/** Rule 4: Rapid Outflow — Adaptive (2+ for small wallets, 3+ for whales) */
 function detectRapidOutflow(tx: Transaction, history: Transaction[]): AnomalyAlert | null {
   if (tx.type !== 'outgoing') return null;
 
@@ -116,17 +138,23 @@ function detectRapidOutflow(tx: Transaction, history: Transaction[]): AnomalyAle
     (t) => t.type === 'outgoing' && t.timestamp > oneHourAgo
   );
 
-  if (recentOutgoing.length < 2) return null; // need at least 2 previous + current = 3
+  const mean = history.length > 0
+    ? history.slice(-10).reduce((sum, t) => sum + t.value, 0) / Math.min(history.length, 10)
+    : 0;
+  const tier = getWalletTier(mean);
+  const minRequired = tier === 'small' ? 1 : 2; // (recentOutgoing count before current)
+
+  if (recentOutgoing.length < minRequired) return null;
 
   return {
     id: `outflow-${tx.txid}`,
     type: 'RAPID_OUTFLOW',
-    severity: recentOutgoing.length > 5 ? 'high' : 'medium',
+    severity: recentOutgoing.length >= 4 ? 'high' : 'medium',
     txid: tx.txid,
     timestamp: tx.timestamp,
     value: tx.value,
-    description: `Rapid outgoing activity: ${recentOutgoing.length + 1} outgoing transactions in the past hour. Worth monitoring if this was not intentional.`,
-    ruleDetails: `${recentOutgoing.length + 1} outgoing transactions within 60 minutes. Rule threshold: 3+ outgoing txs per hour.`,
+    description: `Activité de retraits rapides : ${recentOutgoing.length + 1} transactions sortantes en moins d'une heure. À surveiller s'il ne s'agit pas d'une action volontaire.`,
+    ruleDetails: `${recentOutgoing.length + 1} transactions sortantes en 60 minutes. Seuil adaptatif : ${minRequired + 1}+ pour profil ${tier}.`,
     acknowledged: false,
   };
 }

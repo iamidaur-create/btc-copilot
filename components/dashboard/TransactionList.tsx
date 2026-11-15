@@ -29,6 +29,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { satsToBtc, formatBtc, truncateTxid, formatTimeAgo } from '@/lib/utils/format-btc';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { WalletApiResponse } from '@/app/api/wallet/[address]/route';
 
 type TxRow = WalletApiResponse['transactions'][number];
@@ -41,6 +42,7 @@ interface TransactionListProps {
 }
 
 function TxRow({ tx, address, onExplain }: { tx: TxRow; address: string; onExplain?: (txid: string) => void }) {
+  const { t, language } = useLanguage();
   const isIn = tx.direction === 'in';
   const isSelf = tx.direction === 'self';
   const amountBtc = formatBtc(Math.abs(satsToBtc(tx.netValue)));
@@ -129,16 +131,17 @@ function TxRow({ tx, address, onExplain }: { tx: TxRow; address: string; onExpla
         <p className="text-[11px] text-neutral-600">BTC</p>
       </div>
 
-      {/* Explain button (shown on hover) */}
+      {/* Explain button */}
       {onExplain && (
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onExplain(tx.txid)}
-          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-[11px] gap-1 text-neutral-400 hover:text-[#f7931a]"
+          className="shrink-0 text-xs gap-1 text-[#f7931a] hover:bg-[#f7931a]/10 hover:text-[#f7931a]"
+          title={language === 'fr' ? "Demander à l'assistant d'expliquer cette transaction" : "Ask assistant to explain this transaction"}
         >
-          <Sparkles className="w-3 h-3" />
-          Explain
+          <Sparkles className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">{t.dashboard.explainBtn}</span>
         </Button>
       )}
     </div>
@@ -146,11 +149,15 @@ function TxRow({ tx, address, onExplain }: { tx: TxRow; address: string; onExpla
 }
 
 export function TransactionList({ transactions, address, onExplain }: TransactionListProps) {
+  const { t, language } = useLanguage();
+
   if (transactions.length === 0) {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-neutral-500 text-sm">No transactions found for this address.</p>
+          <p className="text-neutral-500 text-sm">
+            {language === 'fr' ? 'Aucune transaction trouvée pour cette adresse.' : 'No transactions found for this address.'}
+          </p>
         </CardContent>
       </Card>
     );
@@ -160,9 +167,9 @@ export function TransactionList({ transactions, address, onExplain }: Transactio
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Recent Transactions</span>
+          <span>{t.dashboard.recentTransactions}</span>
           <Badge variant="outline" className="text-xs font-normal">
-            {transactions.length} shown
+            {transactions.length} {t.dashboard.shown}
           </Badge>
         </CardTitle>
       </CardHeader>

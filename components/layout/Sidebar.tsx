@@ -14,19 +14,21 @@ import {
   Bitcoin,
   Lock
 } from 'lucide-react';
-
-const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'AI Assistant', href: '/assistant', icon: Bot, badge: 'AI' },
-  { name: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
-  { name: 'Lightning', href: '/lightning', icon: Zap, highlight: true },
-  { name: 'Monitoring', href: '/monitoring', icon: Activity },
-  { name: 'Security Center', href: '/security', icon: ShieldCheck },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { t, language } = useLanguage();
+
+  const navigationItems = [
+    { name: t.nav.dashboard, href: '/dashboard', icon: LayoutDashboard },
+    { name: t.nav.assistant, href: '/assistant', icon: Bot, badge: 'AI' },
+    { name: t.nav.transactions, href: '/transactions', icon: ArrowLeftRight },
+    { name: t.nav.lightning, href: '/lightning', icon: Zap, highlight: true },
+    { name: t.nav.monitoring, href: '/monitoring', icon: Activity },
+    { name: t.nav.security, href: '/security', icon: ShieldCheck },
+    { name: language === 'fr' ? 'Paramètres' : 'Settings', href: '/settings', icon: Settings },
+  ];
 
   return (
     <aside className="w-64 bg-[#0d0f15] border-r border-[#1a1e2b] flex flex-col h-screen sticky top-0 shrink-0 select-none">
@@ -88,12 +90,14 @@ export function Sidebar() {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Read-Only Mode
+              {language === 'fr' ? 'Mode Lecture Seule' : 'Read-Only Mode'}
             </span>
             <Lock className="w-3.5 h-3.5 text-neutral-400" />
           </div>
           <p className="text-[11px] text-neutral-400 leading-relaxed">
-            Zero private key storage. Zero signing. Safe blockchain observation only.
+            {language === 'fr'
+              ? 'Zéro stockage de clé privée. Aucune signature. Observation sécurisée de la blockchain uniquement.'
+              : 'Zero private key storage. Zero signing. Safe blockchain observation only.'}
           </p>
         </div>
       </div>

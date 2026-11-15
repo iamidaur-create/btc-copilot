@@ -12,7 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIResponse, type ChatMessage, type ChatContext, type UserLevel } from '@/lib/ai/provider-factory';
+import { generateAIResponse, type ChatMessage, type ChatContext, type UserLevel, type Language } from '@/lib/ai/provider-factory';
 import { sanitizeUserMessage, sanitizeContext } from '@/lib/ai/privacy/sanitize-context';
 
 // ─── Simple in-memory rate limiter ───────────────────────────────────────────
@@ -40,6 +40,7 @@ interface ChatRequest {
   messages: ChatMessage[];
   context?: Record<string, unknown>;
   level?: UserLevel;
+  language?: Language;
 }
 
 function validateRequest(body: unknown): ChatRequest {
@@ -80,10 +81,13 @@ function validateRequest(body: unknown): ChatRequest {
     throw new Error('level must be "beginner" or "professional"');
   }
 
+  const language = req.language === 'en' ? 'en' : 'fr';
+
   return {
     messages: req.messages as ChatMessage[],
     context: req.context as Record<string, unknown> | undefined,
     level,
+    language,
   };
 }
 
@@ -125,7 +129,8 @@ export async function POST(request: NextRequest) {
     const { response, provider } = await generateAIResponse(
       sanitizedMessages,
       reqData.level ?? 'beginner',
-      sanitizedContext
+      sanitizedContext,
+      reqData.language ?? 'fr'
     );
 
     return NextResponse.json({

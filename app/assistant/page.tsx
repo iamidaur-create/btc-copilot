@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Bot, Sparkles, Send, ShieldCheck, HelpCircle, AlertCircle, Loader2, Cpu } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Message {
@@ -32,23 +33,23 @@ interface WalletContext {
   lightningBalance?: number;
 }
 
-// ─── Suggested questions per level ───────────────────────────────────────────
+// ─── Suggested questions per level (French by default) ────────────────────────
 const SUGGESTED_QUESTIONS: Record<UserLevel, string[]> = {
   beginner: [
-    'What is my current balance?',
-    'Why is my transaction still unconfirmed?',
-    'What is the Lightning Network and when should I use it?',
-    'What does "sat" mean?',
-    'Is it safe to share my Bitcoin address?',
-    'What are transaction fees and why do I pay them?',
+    'Quel est mon solde actuel ?',
+    'Pourquoi ma transaction est-elle en attente ?',
+    "C'est quoi le Lightning Network et quand l'utiliser ?",
+    'Que signifie "sat" (satoshi) ?',
+    'Est-ce risqué de partager mon adresse Bitcoin ?',
+    'Comment fonctionnent les frais de transaction ?',
   ],
   professional: [
-    'Analyze my UTXO set for consolidation opportunities',
-    'Explain the mempool fee dynamics right now',
-    'What is the difference between SegWit v0 and Taproot outputs?',
-    'How does the Lightning HTLCs mechanism work?',
-    'What are the privacy implications of address reuse?',
-    'Explain the BOLT 11 invoice format',
+    "Analyse mon set d'UTXOs pour consolidation",
+    'Explique la dynamique des frais mempool actuelle',
+    'Quelle est la différence entre SegWit v0 et Taproot ?',
+    'Comment fonctionne le mécanisme des HTLC sur Lightning ?',
+    "Quels sont les impacts de la réutilisation d'adresses ?",
+    "Décortique le format d'une facture BOLT 11",
   ],
 };
 
@@ -111,12 +112,12 @@ function inlineFormatting(text: string): React.ReactNode {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AssistantPage() {
+  const { t, language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       role: 'assistant',
-      content:
-        "Hello! I'm **BTC Copilot**, your intelligent Bitcoin assistant.\n\nI can explain transactions, decode script types (Legacy, SegWit, Taproot), explain why payments are stuck, and answer questions about Bitcoin and Lightning in clear language.\n\nWhat would you like to know?",
+      content: t.assistant.welcomeMsg,
     },
   ]);
   const [input, setInput] = useState('');
@@ -126,6 +127,17 @@ export default function AssistantPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const queryHandled = useRef(false);
+
+  // Update welcome message if language changes and only welcome is shown
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === 'welcome') {
+        return [{ id: 'welcome', role: 'assistant', content: t.assistant.welcomeMsg }];
+      }
+      return prev;
+    });
+  }, [t.assistant.welcomeMsg]);
 
   // Load wallet context from sessionStorage (set by dashboard)
   const getWalletContext = useCallback((): WalletContext => {
@@ -172,6 +184,7 @@ export default function AssistantPage() {
           messages: historyForApi,
           context: getWalletContext(),
           level,
+          language,
         }),
       });
 
@@ -223,6 +236,22 @@ export default function AssistantPage() {
     }
   }, [input, loading, messages, level, getWalletContext]);
 
+  // Auto-trigger if URL has explainTx or q query parameter
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !queryHandled.current) {
+      const params = new URLSearchParams(window.location.search);
+      const explainTx = params.get('explainTx');
+      const q = params.get('q');
+      if (explainTx) {
+        queryHandled.current = true;
+        void sendMessage(`Peux-tu m'expliquer la transaction ${explainTx} ? Quel montant, quels frais ont été payés, est-elle confirmée et y a-t-il des points d'attention ?`);
+      } else if (q) {
+        queryHandled.current = true;
+        void sendMessage(q);
+      }
+    }
+  }, [sendMessage]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -236,17 +265,17 @@ export default function AssistantPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#1a1e2b]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-neutral-100">AI Wallet Assistant</h1>
-            <Badge variant="btc">Mistral + Gemini Fallback</Badge>
+            <h1 className="text-2xl font-bold tracking-tight text-neutral-100">{t.assistant.title}</h1>
+            <Badge variant="btc">Gemini Flash + Fallback</Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
-            Ask natural language questions about your transactions, fees, and Bitcoin mechanics.
+            {t.assistant.subtitle}
           </p>
         </div>
 
         {/* Level Selector */}
         <div className="flex items-center gap-2 bg-[#12141c] p-1 rounded-lg border border-[#1e2230]">
-          <span className="text-xs text-neutral-400 px-2 font-medium">Level:</span>
+          <span className="text-xs text-neutral-400 px-2 font-medium">{t.assistant.level}</span>
           <button
             onClick={() => setLevel('beginner')}
             className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
@@ -255,7 +284,7 @@ export default function AssistantPage() {
                 : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            Beginner
+            {t.assistant.beginner}
           </button>
           <button
             onClick={() => setLevel('professional')}
@@ -265,7 +294,7 @@ export default function AssistantPage() {
                 : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            Professional
+            {t.assistant.expert}
           </button>
         </div>
       </div>
@@ -376,7 +405,7 @@ export default function AssistantPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask anything about your wallet or Bitcoin..."
+                  placeholder={t.assistant.inputPlaceholder}
                   disabled={loading}
                   className="flex-1 px-4 py-2.5 rounded-lg bg-[#090a0f] border border-[#232736] text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:border-[#f7931a] focus:ring-1 focus:ring-[#f7931a]/40 transition-colors disabled:opacity-50"
                 />
@@ -391,7 +420,7 @@ export default function AssistantPage() {
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <>
-                      <span>Send</span>
+                      <span>{t.assistant.sendBtn}</span>
                       <Send className="w-3.5 h-3.5" />
                     </>
                   )}
@@ -408,11 +437,11 @@ export default function AssistantPage() {
             <CardHeader>
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5 text-[#f7931a]" />
-                <span>Suggested</span>
+                <span>{t.assistant.suggestedTitle}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 space-y-2">
-              {SUGGESTED_QUESTIONS[level].map((q, idx) => (
+              {t.assistant.suggested.map((q, idx) => (
                 <button
                   key={idx}
                   onClick={() => void sendMessage(q)}
@@ -430,15 +459,15 @@ export default function AssistantPage() {
             <CardHeader>
               <CardTitle className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                Privacy Gateway
+                {t.assistant.privacyTitle}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-xs text-neutral-400 space-y-2">
-              <p>All inputs are automatically sanitized. Addresses are truncated, and private keys or seed phrases are strictly blocked.</p>
+              <p>{t.assistant.privacyDesc}</p>
               <div className="pt-2 border-t border-[#1e2230] text-[11px] text-emerald-400 font-medium space-y-1">
-                <div>✓ Server-side AI orchestration</div>
-                <div>✓ Zero client-side credentials</div>
-                <div>✓ Mistral → Gemini fallback</div>
+                {t.assistant.privacyBullets.map((bullet, i) => (
+                  <div key={i}>{bullet}</div>
+                ))}
               </div>
             </CardContent>
           </Card>

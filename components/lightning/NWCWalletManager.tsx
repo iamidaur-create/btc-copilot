@@ -32,8 +32,10 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { satsToBtc, formatBtc, formatSats } from '@/lib/utils/format-btc';
 import type { NWCConnectionInfo, NWCInvoice, NWCLookupResult } from '@/lib/lightning/nwc';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export function NWCWalletManager() {
+  const { t } = useLanguage();
   const [connectionUri, setConnectionUri] = useState('');
   const [walletInfo, setWalletInfo] = useState<NWCConnectionInfo | null>(null);
   const [balanceSats, setBalanceSats] = useState<number | null>(null);
@@ -186,11 +188,11 @@ export function NWCWalletManager() {
               </div>
               <div>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <span>Nostr Wallet Connect (NWC / NIP-47)</span>
+                  <span>{t.lightning.connectTitle}</span>
                   <Badge variant="btc">Real Wallet</Badge>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Connect any non-custodial Lightning wallet (Alby Hub, Mutiny, Phoenix, Umbrel)
+                  {t.lightning.connectDesc}
                 </CardDescription>
               </div>
             </div>
@@ -198,7 +200,7 @@ export function NWCWalletManager() {
             {walletInfo && (
               <Button variant="outline" size="sm" onClick={handleDisconnect} className="text-xs gap-1.5 text-red-400 hover:text-red-300">
                 <Unlink className="w-3.5 h-3.5" />
-                Disconnect
+                {t.lightning.disconnectBtn}
               </Button>
             )}
           </div>
@@ -210,13 +212,13 @@ export function NWCWalletManager() {
               <div className="space-y-1">
                 <label className="text-xs text-neutral-400 flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-neutral-500" />
-                  <span>NWC Pairing String (nostr+walletconnect://...)</span>
+                  <span>{t.lightning.pairingSecretLabel}</span>
                 </label>
                 <input
                   type="password"
                   value={connectionUri}
                   onChange={(e) => setConnectionUri(e.target.value)}
-                  placeholder="nostr+walletconnect://pubkey?relay=wss://...&secret=..."
+                  placeholder={t.lightning.pairingSecretPlaceholder}
                   className="w-full px-3.5 py-2.5 rounded-lg bg-[#090a0f] border border-[#1e2230] text-xs font-mono text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-amber-400"
                   disabled={isConnecting}
                 />
@@ -225,19 +227,19 @@ export function NWCWalletManager() {
               <div className="flex items-center justify-between pt-1">
                 <p className="text-[11px] text-neutral-500 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  Held in ephemeral memory only. Never saved in localStorage or sent to AI.
+                  {t.lightning.pairingSecretHelp}
                 </p>
 
                 <Button type="submit" disabled={isConnecting || !connectionUri.trim()} size="sm" className="gap-2">
                   {isConnecting ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Connecting...
+                      {t.lightning.connectingBtn}
                     </>
                   ) : (
                     <>
                       <Link2 className="w-3.5 h-3.5" />
-                      Connect Wallet
+                      {t.lightning.connectBtn}
                     </>
                   )}
                 </Button>
@@ -248,7 +250,7 @@ export function NWCWalletManager() {
               {/* Connected Wallet Summary */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-xl bg-[#090a0f] border border-[#1e2230]">
                 <div>
-                  <span className="text-xs text-neutral-500 uppercase font-semibold">Wallet Alias</span>
+                  <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.connectedWallet}</span>
                   <div className="text-base font-bold text-neutral-100 mt-0.5 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>{walletInfo.alias || 'NWC Lightning Wallet'}</span>
@@ -259,7 +261,7 @@ export function NWCWalletManager() {
                 </div>
 
                 <div>
-                  <span className="text-xs text-neutral-500 uppercase font-semibold">Live Balance</span>
+                  <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.lightningBalance}</span>
                   <div className="text-base font-bold text-amber-400 font-mono mt-0.5">
                     {balanceSats !== null ? `${formatSats(balanceSats)} sats` : 'Unavailable'}
                   </div>
@@ -269,7 +271,7 @@ export function NWCWalletManager() {
                 </div>
 
                 <div>
-                  <span className="text-xs text-neutral-500 uppercase font-semibold">Allowed Methods (NIP-47)</span>
+                  <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.supportedMethods}</span>
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     {walletInfo.methods.map((method) => (
                       <span key={method} className="text-[10px] px-2 py-0.5 rounded bg-[#161a26] text-neutral-300 font-mono border border-[#222838]">
@@ -285,12 +287,12 @@ export function NWCWalletManager() {
                 <div className="p-4 rounded-xl bg-[#12141c] border border-[#1e2230] space-y-4">
                   <h4 className="text-xs font-semibold text-neutral-200 uppercase tracking-wider flex items-center gap-2">
                     <ArrowDownLeft className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Receive via Lightning (Generate Real Invoice)</span>
+                    <span>{t.lightning.createInvoiceTitle}</span>
                   </h4>
 
                   <form onSubmit={handleCreateInvoice} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="text-[11px] text-neutral-400">Amount (Satoshis)</label>
+                      <label className="text-[11px] text-neutral-400">{t.lightning.amountLabel}</label>
                       <input
                         type="number"
                         min="1"
@@ -302,7 +304,7 @@ export function NWCWalletManager() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="text-[11px] text-neutral-400">Memo / Description</label>
+                      <label className="text-[11px] text-neutral-400">{t.lightning.memoLabel}</label>
                       <div className="flex gap-2 mt-1">
                         <input
                           type="text"
@@ -312,8 +314,17 @@ export function NWCWalletManager() {
                           placeholder="Payment for goods/service"
                         />
                         <Button type="submit" size="sm" disabled={isCreatingInvoice} className="gap-1.5 shrink-0">
-                          {isCreatingInvoice ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <QrCode className="w-3.5 h-3.5" />}
-                          Generate Invoice
+                          {isCreatingInvoice ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              {t.lightning.generatingInvoiceBtn}
+                            </>
+                          ) : (
+                            <>
+                              <QrCode className="w-3.5 h-3.5" />
+                              {t.lightning.generateInvoiceBtn}
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -330,12 +341,12 @@ export function NWCWalletManager() {
                           {invoiceStatus?.settled ? (
                             <Badge variant="success" className="gap-1 text-[10px]">
                               <CheckCircle2 className="w-3 h-3" />
-                              PAID & SETTLED
+                              {t.lightning.paymentReceived}
                             </Badge>
                           ) : (
                             <Badge variant="warning" className="gap-1 text-[10px] animate-pulse">
                               <Loader2 className="w-3 h-3 animate-spin" />
-                              Awaiting Payment...
+                              {t.lightning.awaitingPayment}
                             </Badge>
                           )}
                         </div>
@@ -347,7 +358,7 @@ export function NWCWalletManager() {
                           className="text-xs gap-1 text-neutral-400 hover:text-amber-400"
                         >
                           {isCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                          {isCopied ? 'Copied!' : 'Copy BOLT-11'}
+                          {isCopied ? t.lightning.copied : t.lightning.copyInvoice}
                         </Button>
                       </div>
 

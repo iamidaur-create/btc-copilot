@@ -9,8 +9,9 @@ import {
   Activity, ShieldAlert, AlertTriangle, CheckCircle2,
   RefreshCw, Bot, Loader2, ChevronDown, ChevronUp, Search
 } from 'lucide-react';
-import { detectAnomalies, getSeverityColor, getAnomalyLabel } from '@/lib/anomaly/detector';
+import { detectAnomalies, getSeverityColor, getAnomalyLabel, getWalletTier } from '@/lib/anomaly/detector';
 import type { AnomalyAlert, Transaction } from '@/lib/anomaly/detector';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface ApiTransaction {
@@ -126,12 +127,14 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function MonitoringPage() {
+  const { t, language } = useLanguage();
   const [address, setAddress] = useState('');
   const [inputAddress, setInputAddress] = useState('');
   const [alerts, setAlerts] = useState<AnomalyAlert[]>([]);
   const [scanning, setScanning] = useState(false);
   const [lastScan, setLastScan] = useState<Date | null>(null);
   const [txCount, setTxCount] = useState(0);
+  const [walletTier, setWalletTierState] = useState<'small' | 'medium' | 'whale'>('small');
   const [error, setError] = useState<string | null>(null);
 
   const runScan = useCallback(async (addr: string) => {
@@ -163,6 +166,9 @@ export default function MonitoringPage() {
         type: tx.direction === 'out' ? 'outgoing' : 'incoming',
         confirmed: tx.confirmed,
       }));
+
+      const mean = txs.reduce((sum, t) => sum + t.value, 0) / txs.length;
+      setWalletTierState(getWalletTier(mean));
 
       const detected = detectAnomalies(txs);
       setAlerts(detected);
@@ -210,12 +216,14 @@ export default function MonitoringPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl font-bold tracking-tight text-neutral-100 flex items-center gap-2">
               <Activity className="w-6 h-6 text-[#f7931a]" />
-              <span>Wallet Monitoring</span>
+              <span>{t.monitoring.title}</span>
             </h1>
-            <Badge variant="btc">Deterministic Engine</Badge>
+            <Badge variant="btc">
+              {walletTier === 'small' ? 'Profil Standard (< 0.1 BTC)' : walletTier === 'medium' ? 'Profil Intermédiaire' : 'Profil Whale (> 1 BTC)'}
+            </Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
-            Statistical anomaly detection — no AI guessing. LLM explains alerts on demand.
+            {t.monitoring.subtitle} {walletTier === 'small' ? '(Seuil adaptatif 3.0x)' : '(Seuil adaptatif 5.0x)'}
           </p>
         </div>
         <Button
@@ -226,7 +234,7 @@ export default function MonitoringPage() {
           disabled={scanning || !address}
         >
           {scanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5 text-neutral-400" />}
-          <span>{scanning ? 'Scanning…' : 'Scan Now'}</span>
+          <span>{scanning ? (language === 'fr' ? 'Analyse…' : 'Scanning…') : (language === 'fr' ? 'Analyser' : 'Scan Now')}</span>
         </Button>
       </div>
 
@@ -241,12 +249,12 @@ export default function MonitoringPage() {
                 value={inputAddress}
                 onChange={(e) => setInputAddress(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleScan()}
-                placeholder="Enter Bitcoin address to monitor (e.g. 1A1zP1…)"
+                placeholder={language === 'fr' ? "Entrez l'adresse Bitcoin à surveiller (ex. 1A1zP1…)" : "Enter Bitcoin address to monitor (e.g. 1A1zP1…)"}
                 className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-[#090a0f] border border-[#232736] text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:border-[#f7931a] focus:ring-1 focus:ring-[#f7931a]/40 transition-colors"
               />
             </div>
             <Button variant="primary" size="md" onClick={handleScan} disabled={scanning || !inputAddress.trim()}>
-              {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Analyze'}
+              {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : (language === 'fr' ? 'Analyser' : 'Analyze')}
             </Button>
           </div>
           {lastScan && (

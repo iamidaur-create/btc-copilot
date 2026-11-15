@@ -6,8 +6,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Zap, Network, Globe, Layers, ExternalLink } from 'lucide-react';
 import { NWCWalletManager } from '@/components/lightning/NWCWalletManager';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function LightningPage() {
+  const { t } = useLanguage();
   const acinqPubkey = '03864ef025fde8fb587d989186ce6a4a186895ee44a926bfc370e2c366597a3f8f';
 
   return (
@@ -18,19 +20,19 @@ export default function LightningPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-neutral-100 flex items-center gap-2">
               <Zap className="w-6 h-6 text-amber-400 fill-amber-400/20" />
-              <span>Lightning Network & NWC Wallet</span>
+              <span>{t.lightning.title}</span>
             </h1>
             <Badge variant="btc">NIP-47 Live</Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
-            Connect your non-custodial Lightning wallet with Nostr Wallet Connect, inspect balances, and receive payments.
+            {t.lightning.subtitle}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Badge variant="success" className="text-xs py-1">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1"></span>
-            NWC Protocol Ready
+            {t.lightning.protocolReady}
           </Badge>
         </div>
       </div>
@@ -43,7 +45,7 @@ export default function LightningPage() {
         <Card variant="accent">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Total Network Capacity</span>
+              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.lightning.networkCapacity}</span>
               <Zap className="w-4 h-4 text-amber-400" />
             </div>
             <div className="mt-3">
@@ -51,7 +53,7 @@ export default function LightningPage() {
                 2,530.94 <span className="text-sm font-sans text-amber-400">BTC</span>
               </div>
               <p className="text-xs text-neutral-400 mt-1 font-mono">
-                ~253 Billion satoshis locked
+                {t.lightning.lockedSats}
               </p>
             </div>
           </CardContent>
@@ -60,7 +62,7 @@ export default function LightningPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Active Channels</span>
+              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.lightning.activeChannels}</span>
               <Layers className="w-4 h-4 text-sky-400" />
             </div>
             <div className="mt-3">
@@ -68,7 +70,7 @@ export default function LightningPage() {
                 22,680
               </div>
               <p className="text-xs text-neutral-400 mt-1">
-                Payment routing conduits
+                {t.lightning.routingConduits}
               </p>
             </div>
           </CardContent>
@@ -77,7 +79,7 @@ export default function LightningPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Active Nodes</span>
+              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.lightning.activeNodes}</span>
               <Network className="w-4 h-4 text-purple-400" />
             </div>
             <div className="mt-3">
@@ -85,7 +87,7 @@ export default function LightningPage() {
                 13,777
               </div>
               <p className="text-xs text-neutral-400 mt-1">
-                6,816 Tor • 3,283 Clearnet
+                {t.lightning.torClearnet}
               </p>
             </div>
           </CardContent>
@@ -94,7 +96,7 @@ export default function LightningPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">Median Base Fee</span>
+              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">{t.lightning.medianBaseFee}</span>
               <Globe className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="mt-3">
@@ -102,7 +104,7 @@ export default function LightningPage() {
                 500 <span className="text-xs font-sans text-neutral-400">mSat</span>
               </div>
               <p className="text-xs text-neutral-400 mt-1 font-mono">
-                Median fee rate: 100 ppm
+                {t.lightning.medianFeeRate}
               </p>
             </div>
           </CardContent>
@@ -118,8 +120,8 @@ export default function LightningPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <CardTitle className="text-lg">Demo Node: ACINQ (Phoenix Wallet)</CardTitle>
-                <Badge variant="btc">Top 3 Liquidity Hub</Badge>
+                <CardTitle className="text-lg">{t.lightning.demoNodeTitle}</CardTitle>
+                <Badge variant="btc">{t.lightning.liquidityHubBadge}</Badge>
               </div>
               <CardDescription className="font-mono text-xs">
                 {acinqPubkey}
@@ -133,14 +135,14 @@ export default function LightningPage() {
             rel="noopener noreferrer"
             className="text-xs text-neutral-400 hover:text-amber-400 flex items-center gap-1"
           >
-            <span>View on Mempool</span>
+            <span>{t.lightning.viewMempool}</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-[#090a0f] border border-[#1e2230]">
             <div>
-              <span className="text-xs text-neutral-500 uppercase font-semibold">Node Capacity</span>
+              <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.nodeCapacity}</span>
               <div className="text-xl font-bold text-neutral-100 font-mono mt-1">
                 258.29 <span className="text-sm font-sans text-amber-400">BTC</span>
               </div>
@@ -148,7 +150,7 @@ export default function LightningPage() {
             </div>
 
             <div>
-              <span className="text-xs text-neutral-500 uppercase font-semibold">Open Channels</span>
+              <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.openChannels}</span>
               <div className="text-xl font-bold text-sky-400 font-mono mt-1">
                 1,518 Channels
               </div>
@@ -156,7 +158,7 @@ export default function LightningPage() {
             </div>
 
             <div>
-              <span className="text-xs text-neutral-500 uppercase font-semibold">Operator / Origin</span>
+              <span className="text-xs text-neutral-500 uppercase font-semibold">{t.lightning.operatorOrigin}</span>
               <div className="text-xl font-bold text-neutral-200 mt-1">
                 ACINQ (US / France)
               </div>
