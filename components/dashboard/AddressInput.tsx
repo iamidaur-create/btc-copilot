@@ -125,19 +125,56 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
         </p>
       )}
 
-      {/* Demo wallet shortcut */}
-      <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-[#1e2230]" />
-        <button
-          type="button"
-          onClick={loadDemo}
-          disabled={isLoading}
-          className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-[#f7931a] transition-colors disabled:opacity-50"
-        >
-          <Zap className="w-3 h-3" />
-          {t.dashboard.loadDemo}
-        </button>
-        <div className="h-px flex-1 bg-[#1e2230]" />
+      {/* Demo personas shortcut (Fatou, Moussa, Cheikh) */}
+      <div className="pt-1">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-px flex-1 bg-[#1e2230]" />
+          <span className="text-[11px] text-neutral-500 font-semibold uppercase tracking-wider">
+            {t.dashboard.loadDemo} / Profils Démo
+          </span>
+          <div className="h-px flex-1 bg-[#1e2230]" />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              const addr = 'bc1qjl4y06z7p7z5v9n3q2t8x7m6k5j4h3g2f1zuqs';
+              setInputValue(addr);
+              onAddressSubmit(addr);
+            }}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/30 hover:bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 text-xs transition-colors disabled:opacity-50"
+          >
+            <span>🟢</span>
+            <span className="font-semibold">Fatou</span>
+            <span className="text-[10px] text-emerald-400/80">(Épargne & Découverte)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              const addr = '13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94';
+              setInputValue(addr);
+              onAddressSubmit(addr);
+            }}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/30 hover:bg-amber-900/40 text-amber-300 border border-amber-500/30 text-xs transition-colors disabled:opacity-50"
+          >
+            <span>🟠</span>
+            <span className="font-semibold">Moussa</span>
+            <span className="text-[10px] text-amber-400/80">(Alerte Dust & Risque)</span>
+          </button>
+
+          <a
+            href="/lightning"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-950/30 hover:bg-sky-900/40 text-sky-300 border border-sky-500/30 text-xs transition-colors"
+          >
+            <span>⚡</span>
+            <span className="font-semibold">Cheikh</span>
+            <span className="text-[10px] text-sky-400/80">(Lightning NWC)</span>
+          </a>
+        </div>
       </div>
     </div>
   );

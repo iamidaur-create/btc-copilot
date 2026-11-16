@@ -92,16 +92,18 @@ ${context.transactions && context.transactions.length > 0
     : '';
 
   const domainGuardrail = isFr
-    ? `## RÈGLE STRICTE DE PÉRIMÈTRE / GARDE-FOU HORS-SUJET (NON NÉGOCIABLE)
-Tu es STRICTEMENT et EXCLUSIVEMENT un assistant dédié à Bitcoin, au Lightning Network, à la cryptographie appliquée et à la sécurité des portefeuilles.
-Si l'utilisateur te pose une question hors de ce domaine (par exemple : culture générale, météo, hauteur de la tour Eiffel, recettes de cuisine, cinéma, ou programmation générale non liée à Bitcoin) :
-REFUSE POLIMENT ET CATÉGORIQUEMENT DE RÉPONDRE en 1 ou 2 phrases simples :
-"Je suis BTC Copilot, un assistant exclusivement dédié à Bitcoin et au Lightning Network. Je ne peux pas répondre aux questions hors de ce périmètre. N'hésitez pas à me poser une question sur votre portefeuille ou sur Bitcoin !"`
-    : `## STRICT DOMAIN SCOPE & OUT-OF-SCOPE GUARDRAIL (CRITICAL)
-You are STRICTLY and EXCLUSIVELY an assistant dedicated to Bitcoin, the Lightning Network, blockchain mechanics, and wallet security.
-If the user asks ANY question outside this domain (e.g. general knowledge, height of the Eiffel Tower, weather, cooking recipes, movies, or general programming unrelated to Bitcoin):
-POLITELY AND FIRMLY DECLINE in 1-2 sentences:
-"I am BTC Copilot, an assistant exclusively dedicated to Bitcoin and the Lightning Network. I cannot answer questions outside this scope. Please feel free to ask any question about your wallet or Bitcoin!"`;
+    ? `## CADRAGE DE DOMAINE & ESPRIT COPILOTE
+Tu es un copilote dédié à Bitcoin, au Lightning Network, à la cryptographie et à la sécurité financière.
+Si l'utilisateur pose une question de culture générale, historique ou économique liée de près ou de loin à la monnaie ou à la technologie (ex: Satoshi Nakamoto, crise de 2008, inflation, énergie, comparaison crypto) :
+- Réponds brièvement et avec justesse en 1 ou 2 phrases concises.
+- Puis invite courtoisement à analyser une transaction, à vérifier une adresse ou à explorer le portefeuille.
+Si la question est totalement éloignée de toute logique technique ou financière (ex: météo, cuisine) : réponds avec esprit et bienveillance en une phrase, puis ramène gentiment le sujet vers son portefeuille Bitcoin.`
+    : `## DOMAIN SCOPE & COPILOT PHILOSOPHY
+You are an intelligent copilot specialized in Bitcoin, Lightning Network, cryptography, and wallet security.
+If the user asks general economic, historical, or technological questions (e.g. Satoshi Nakamoto, 2008 crisis, inflation, mining energy, or crypto comparisons):
+- Answer concisely and accurately in 1-2 sentences.
+- Then smoothly invite the user to analyze a transaction, inspect an address, or monitor their wallet.
+If a question is completely unrelated (e.g. weather, cooking): give a brief courteous response in one sentence and guide them back to their Bitcoin wallet.`;
 
   return isFr
     ? `Tu es BTC Copilot, un copilote intelligent spécialisé dans Bitcoin et le Lightning Network.
@@ -163,28 +165,20 @@ function generateLocalResponse(
   const isFr = language === 'fr';
 
   // 0. Out-of-scope guardrail check (e.g. Eiffel Tower, weather, recipes...)
+  // Out-of-scope gentle redirection
   const outOfScopeKeywords = [
     'tour eiffel',
-    'eiffel',
     'meteo',
     'weather',
     'recette',
     'recipe',
-    'cuisine',
-    'president',
-    'paris',
-    'capitale',
-    'capital',
-    'population',
-    'film',
     'cinema',
-    'musique',
     'football',
   ];
   if (outOfScopeKeywords.some((w) => query.includes(w))) {
     return isFr
-      ? "Je suis **BTC Copilot**, un assistant exclusivement dédié à Bitcoin et au Lightning Network. Je ne peux pas répondre aux questions de culture générale ou hors sujet. N'hésitez pas à me poser une question sur votre portefeuille ou sur Bitcoin !"
-      : "I am **BTC Copilot**, an assistant exclusively dedicated to Bitcoin and the Lightning Network. I cannot answer general knowledge or out-of-scope questions. Please feel free to ask any question regarding your wallet or Bitcoin!";
+      ? "En tant que copilote financier, mon rôle est de veiller sur votre portefeuille et de décrypter la blockchain Bitcoin. Je me concentre sur vos transactions, vos frais et la sécurité de vos adresses. Que souhaitez-vous vérifier aujourd'hui ?"
+      : "As a financial copilot, my focus is Bitcoin blockchain security and wallet intelligence. I analyze your transactions, fee rates, and address risks. What would you like to verify today?";
   }
 
   // 1. Balance inquiries
