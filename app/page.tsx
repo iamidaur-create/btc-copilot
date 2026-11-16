@@ -169,14 +169,14 @@ export default function LandingPage() {
                 <div className="p-3 rounded-xl bg-[#090a0f] border border-[#1e2230] text-xs font-mono space-y-1">
                   <div className="text-neutral-500 text-[10px]">FORMAT & SOLDE</div>
                   <div className="text-neutral-200">Native SegWit (bc1q...)</div>
-                  <div className="text-amber-400 font-semibold">10 156 sats (~0.00010 BTC)</div>
+                  <div className="text-amber-400 font-semibold">60 000 sats (~0.00060 BTC)</div>
                 </div>
               </div>
 
               <div className="pt-6">
                 <button
                   type="button"
-                  onClick={() => selectPersona('bc1qjl4y06z7p7z5v9n3q2t8x7m6k5j4h3g2f1zuqs')}
+                  onClick={() => selectPersona('bc1qzg00x6y3s6j3w798lese4aklk5xe3xed5hzk9n')}
                   className="w-full py-2.5 px-4 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <span>{isFr ? "Lancer le Profil de Fatou" : "Launch Fatou's Profile"}</span>

@@ -240,6 +240,69 @@ export default function DashboardPage() {
           {/* Stats cards + fee rates */}
           <WalletStats data={walletData} />
 
+          {/* Quick Actions Row: Copilot Intelligence & Security Shortcuts */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => router.push('/assistant')}
+              className="p-3.5 rounded-xl bg-[#12141c] hover:bg-[#161a24] border border-[#1e2230] hover:border-purple-500/40 text-left transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0">
+                  <span className="text-sm">💬</span>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-neutral-100 group-hover:text-purple-300 transition-colors">
+                    {language === 'fr' ? 'Explication IA du Portefeuille' : 'AI Wallet Summary'}
+                  </div>
+                  <div className="text-[11px] text-neutral-500">
+                    {language === 'fr' ? 'Analyse en langage clair de vos fonds' : 'Plain language breakdown of your funds'}
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push('/monitoring')}
+              className="p-3.5 rounded-xl bg-[#12141c] hover:bg-[#161a24] border border-[#1e2230] hover:border-amber-500/40 text-left transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
+                  <span className="text-sm">🛡️</span>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-neutral-100 group-hover:text-amber-300 transition-colors">
+                    {language === 'fr' ? 'Surveillance des Risques' : 'Risk & Anomaly Monitor'}
+                  </div>
+                  <div className="text-[11px] text-neutral-500">
+                    {language === 'fr' ? 'Détection dust, drains et anomalies' : 'Dust attacks, outflows & anomaly checks'}
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push('/security')}
+              className="p-3.5 rounded-xl bg-[#12141c] hover:bg-[#161a24] border border-[#1e2230] hover:border-emerald-500/40 text-left transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+                  <span className="text-sm">🔍</span>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-neutral-100 group-hover:text-emerald-300 transition-colors">
+                    {language === 'fr' ? 'Vérificateur Anti-Arnaque' : 'Anti-Scam Verifier'}
+                  </div>
+                  <div className="text-[11px] text-neutral-500">
+                    {language === 'fr' ? 'Vérifier une adresse avant tout envoi' : 'Check address against risk databases'}
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+
           {/* Transaction list */}
           <TransactionList
             transactions={walletData.transactions}

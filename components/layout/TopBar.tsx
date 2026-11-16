@@ -57,15 +57,6 @@ export function TopBar({
           <span>Lightning: <strong className="text-neutral-100">ACINQ</strong></span>
         </Link>
 
-        {/* AI Provider Status */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#141a24] border border-[#1e2638] text-xs text-neutral-300">
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-          <span className="text-neutral-400">AI Gateway:</span>
-          <span className="font-medium text-neutral-200">Mistral</span>
-          <span className="text-neutral-500">/</span>
-          <span className="text-neutral-400">Gemini</span>
-        </div>
-
         {/* Security Pill */}
         <Link
           href="/security"

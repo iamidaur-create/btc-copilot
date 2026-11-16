@@ -207,6 +207,41 @@ export function NWCWalletManager() {
         </CardHeader>
 
         <CardContent>
+          {/* Pedagogical What is Lightning Banner */}
+          <div className="p-3.5 mb-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-start gap-2.5">
+              <Zap className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-semibold text-neutral-100">
+                  À quoi sert Lightning Network ?
+                </span>
+                <p className="text-neutral-400 text-[11px] mt-0.5 leading-relaxed">
+                  Contrairement aux transactions Bitcoin classiques (10 à 60 minutes d&apos;attente), Lightning règle les paiements en <strong>1 seconde</strong> avec des frais dérisoires (<strong>1 satoshi</strong>, soit &lt; 0,001 €).
+                </p>
+              </div>
+            </div>
+
+            {!walletInfo && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setWalletInfo({
+                    isConnected: true,
+                    alias: "Cheikh's Phoenix Lightning Node (Démo)",
+                    pubkey: '028b1b22340b01db829b3a6e9a0f4438fa74e50d53c7c64c7810777592cfdf70a9',
+                    methods: ['get_info', 'get_balance', 'make_invoice', 'lookup_invoice'],
+                  });
+                  setBalanceSats(25000);
+                }}
+                className="shrink-0 text-amber-400 border-amber-500/40 hover:bg-amber-500/10 gap-1.5"
+              >
+                <span>⚡ Charger le Nœud de Cheikh</span>
+              </Button>
+            )}
+          </div>
+
           {!walletInfo ? (
             <form onSubmit={handleConnect} className="space-y-3">
               <div className="space-y-1">

@@ -139,7 +139,7 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
           <button
             type="button"
             onClick={() => {
-              const addr = 'bc1qjl4y06z7p7z5v9n3q2t8x7m6k5j4h3g2f1zuqs';
+              const addr = 'bc1qzg00x6y3s6j3w798lese4aklk5xe3xed5hzk9n';
               setInputValue(addr);
               onAddressSubmit(addr);
             }}
