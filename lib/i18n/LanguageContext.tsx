@@ -106,6 +106,24 @@ export interface Translations {
     explainAiBtn: string;
     profileSmall: string;
     profileWhale: string;
+    rulesActive: string;
+    ruleLargeAmountSmall: string;
+    ruleLargeAmountWhale: string;
+    ruleHighFrequency: string;
+    ruleDustAttack: string;
+    ruleRapidOutflow: string;
+    ruleFeeOverpayment: string;
+    ruleNewAddress: string;
+    statTotal: string;
+    statHigh: string;
+    statMedium: string;
+    statLow: string;
+    lastScanLabel: string;
+    txsAnalyzedSuffix: string;
+    emptyPrompt: string;
+    emptyDesc: string;
+    explainBtn: string;
+    explaining: string;
   };
   // Lightning
   lightning: {
@@ -314,10 +332,28 @@ export const translations: Record<Language, Translations> = {
       title: 'Surveillance du Portefeuille',
       subtitle: 'Détection d’anomalies adaptative basée sur le profil du portefeuille.',
       noAlertsTitle: 'Aucune anomalie détectée',
-      noAlertsDesc: 'Toutes les transactions récentes respectent les modèles de dépense habituels.',
+      noAlertsDesc: 'transactions analysées — toutes dans les paramètres normaux.',
       explainAiBtn: 'Expliquer cette alerte',
-      profileSmall: 'Profil Standard (< 0.1 BTC) : Détection dès 3x la moyenne',
-      profileWhale: 'Profil Whale (> 1 BTC) : Détection dès 5x la moyenne',
+      profileSmall: 'Profil Standard (< 0.1 BTC) : Seuil adaptatif 3.0x',
+      profileWhale: 'Profil Whale (> 1 BTC) : Seuil adaptatif 5.0x',
+      rulesActive: 'Règles de Détection Intelligentes Actives',
+      ruleLargeAmountSmall: 'Montant Inhabituel (Seuil adaptatif 3.0× moyenne glissante)',
+      ruleLargeAmountWhale: 'Montant Inhabituel (Seuil adaptatif 5.0× moyenne glissante)',
+      ruleHighFrequency: 'Fréquence Élevée (>5 txs / 24h)',
+      ruleDustAttack: 'Attaque Dust (<546 sats - risque dé-anonymisation)',
+      ruleRapidOutflow: 'Sortie Rapide de Fonds (Détection de drainage rapide en 1h)',
+      ruleFeeOverpayment: 'Surpaiement de Frais (Frais anormaux >20% de la transaction)',
+      ruleNewAddress: 'Nouvelle Adresse de Destination Inconnue',
+      statTotal: 'Alertes Totales',
+      statHigh: 'Sévérité Élevée',
+      statMedium: 'Moyenne',
+      statLow: 'Faible',
+      lastScanLabel: 'Dernière analyse',
+      txsAnalyzedSuffix: 'transactions analysées',
+      emptyPrompt: 'Entrez une adresse Bitcoin ci-dessus pour lancer la surveillance.',
+      emptyDesc: 'Le moteur intelligent analysera les flux, les patterns UTXO et les anomalies statistiques.',
+      explainBtn: 'Expliquer',
+      explaining: 'Analyse IA en cours…',
     },
     lightning: {
       title: 'Lightning Network & Portefeuille NWC',
@@ -521,10 +557,28 @@ export const translations: Record<Language, Translations> = {
       title: 'Wallet Monitoring',
       subtitle: 'Adaptive anomaly detection calibrated to wallet profile.',
       noAlertsTitle: 'No anomalies detected',
-      noAlertsDesc: 'All recent transactions align with expected spending patterns.',
+      noAlertsDesc: 'transactions analyzed — all within normal parameters.',
       explainAiBtn: 'Explain this alert',
-      profileSmall: 'Standard profile (< 0.1 BTC): Alert at 3x rolling mean',
-      profileWhale: 'Whale profile (> 1 BTC): Alert at 5x rolling mean',
+      profileSmall: 'Standard profile (< 0.1 BTC): Adaptive 3.0x threshold',
+      profileWhale: 'Whale profile (> 1 BTC): Adaptive 5.0x threshold',
+      rulesActive: 'Intelligent Detection Rules Active',
+      ruleLargeAmountSmall: 'Large Amount (Adaptive 3.0× rolling mean sensitivity)',
+      ruleLargeAmountWhale: 'Large Amount (Adaptive 5.0× whale rolling mean)',
+      ruleHighFrequency: 'High Frequency (>5 txs / 24h)',
+      ruleDustAttack: 'Dust Attack (<546 sats - de-anonymization risk)',
+      ruleRapidOutflow: 'Rapid Outflow (Potential wallet drain detection in 1h)',
+      ruleFeeOverpayment: 'Fee Overpayment (Abnormal fees >20% of transaction)',
+      ruleNewAddress: 'New Destination Address (First outgoing transfer)',
+      statTotal: 'Total Alerts',
+      statHigh: 'High Severity',
+      statMedium: 'Medium',
+      statLow: 'Low',
+      lastScanLabel: 'Last scan',
+      txsAnalyzedSuffix: 'transactions analyzed',
+      emptyPrompt: 'Enter a Bitcoin address above to start monitoring.',
+      emptyDesc: 'The intelligent engine will analyze transaction flows, UTXO patterns and statistical anomalies.',
+      explainBtn: 'Explain',
+      explaining: 'Getting AI explanation…',
     },
     lightning: {
       title: 'Lightning Network & NWC Wallet',

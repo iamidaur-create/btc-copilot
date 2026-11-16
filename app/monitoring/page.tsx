@@ -27,6 +27,7 @@ interface ApiTransaction {
 
 // ─── Alert Card ──────────────────────────────────────────────────────────────
 function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: AnomalyAlert) => void }) {
+  const { t, language } = useLanguage();
   const [expanded, setExpanded] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explaining, setExplaining] = useState(false);
@@ -46,12 +47,12 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
       const res = await fetch('/api/ai/alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ alert, level: 'beginner' }),
+        body: JSON.stringify({ alert, level: 'beginner', language }),
       });
       const data = await res.json() as { explanation?: string; error?: string };
-      setExplanation(data.explanation ?? data.error ?? 'Unable to get explanation.');
+      setExplanation(data.explanation ?? data.error ?? (language === 'fr' ? 'Impossible d’obtenir l’explication.' : 'Unable to get explanation.'));
     } catch {
-      setExplanation('Network error. Could not get AI explanation.');
+      setExplanation(language === 'fr' ? 'Erreur réseau. Impossible d’obtenir l’explication IA.' : 'Network error. Could not get AI explanation.');
     } finally {
       setExplaining(false);
     }
@@ -71,7 +72,7 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
             <div className="flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 shrink-0" style={{ color }} />
               <span className="font-semibold text-sm text-neutral-100">
-                {getAnomalyLabel(alert.type)}
+                {getAnomalyLabel(alert.type, language)}
               </span>
               <span
                 className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
@@ -81,7 +82,7 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
               </span>
             </div>
             <span className="text-xs text-neutral-500 shrink-0">
-              {new Date(alert.timestamp * 1000).toLocaleString()}
+              {new Date(alert.timestamp * 1000).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US')}
             </span>
           </div>
 
@@ -94,6 +95,11 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
             <span className="text-[10px] text-neutral-500">
               {alert.value.toLocaleString()} sats
             </span>
+            {alert.fee && alert.fee > 0 && (
+              <span className="text-[10px] text-neutral-500 font-mono">
+                • {language === 'fr' ? 'Frais :' : 'Fee:'} {alert.fee.toLocaleString()} sats
+              </span>
+            )}
           </div>
         </div>
 
@@ -102,7 +108,7 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
           className="shrink-0 flex items-center gap-1.5 text-xs text-[#f7931a] hover:text-[#ff9f20] transition-colors px-2 py-1 rounded-lg bg-[#f7931a]/10 hover:bg-[#f7931a]/20"
         >
           <Bot className="w-3.5 h-3.5" />
-          <span>Explain</span>
+          <span>{t.monitoring.explainBtn}</span>
           {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         </button>
       </div>
@@ -112,7 +118,7 @@ function AlertCard({ alert, onExplain }: { alert: AnomalyAlert; onExplain: (a: A
           {explaining ? (
             <div className="flex items-center gap-2 text-xs text-neutral-400">
               <Loader2 className="w-3.5 h-3.5 animate-spin text-[#f7931a]" />
-              <span>Getting AI explanation…</span>
+              <span>{t.monitoring.explaining}</span>
             </div>
           ) : (
             <div className="text-xs text-neutral-300 leading-relaxed space-y-1">
@@ -162,15 +168,16 @@ export default function MonitoringPage() {
       const txs: Transaction[] = data.transactions.map((tx) => ({
         txid: tx.txid,
         value: Math.abs(tx.netValue || 0),
+        fee: tx.fee,
         timestamp: tx.blockTime ?? Math.floor(Date.now() / 1000),
         type: tx.direction === 'out' ? 'outgoing' : 'incoming',
         confirmed: tx.confirmed,
       }));
 
-      const mean = txs.reduce((sum, t) => sum + t.value, 0) / txs.length;
+      const mean = txs.reduce((sum, t) => sum + t.value, 0) / (txs.length || 1);
       setWalletTierState(getWalletTier(mean));
 
-      const detected = detectAnomalies(txs);
+      const detected = detectAnomalies(txs, language);
       setAlerts(detected);
       setTxCount(txs.length);
       setLastScan(new Date());
@@ -180,7 +187,7 @@ export default function MonitoringPage() {
     } finally {
       setScanning(false);
     }
-  }, []);
+  }, [language]);
 
   // Auto-scan on page load if address is in sessionStorage
   useEffect(() => {
@@ -219,7 +226,11 @@ export default function MonitoringPage() {
               <span>{t.monitoring.title}</span>
             </h1>
             <Badge variant="btc">
-              {walletTier === 'small' ? 'Profil Standard (< 0.1 BTC)' : walletTier === 'medium' ? 'Profil Intermédiaire' : 'Profil Whale (> 1 BTC)'}
+              {walletTier === 'small' 
+                ? t.monitoring.profileSmall 
+                : walletTier === 'medium' 
+                ? (language === 'fr' ? 'Profil Intermédiaire (0.1 - 1 BTC)' : 'Medium Profile (0.1 - 1 BTC)') 
+                : t.monitoring.profileWhale}
             </Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
@@ -259,7 +270,7 @@ export default function MonitoringPage() {
           </div>
           {lastScan && (
             <p className="text-[11px] text-neutral-500 mt-2">
-              Last scan: {lastScan.toLocaleTimeString()} — {txCount} transactions analyzed
+              {t.monitoring.lastScanLabel}: {lastScan.toLocaleTimeString(language === 'fr' ? 'fr-FR' : 'en-US')} — {txCount} {t.monitoring.txsAnalyzedSuffix}
             </p>
           )}
         </CardContent>
@@ -270,25 +281,25 @@ export default function MonitoringPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-neutral-100">{alerts.length}</div>
-            <div className="text-xs text-neutral-400 mt-0.5">Total Alerts</div>
+            <div className="text-xs text-neutral-400 mt-0.5">{t.monitoring.statTotal}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-red-400">{highAlerts.length}</div>
-            <div className="text-xs text-neutral-400 mt-0.5">High Severity</div>
+            <div className="text-xs text-neutral-400 mt-0.5">{t.monitoring.statHigh}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-[#f7931a]">{medAlerts.length}</div>
-            <div className="text-xs text-neutral-400 mt-0.5">Medium</div>
+            <div className="text-xs text-neutral-400 mt-0.5">{t.monitoring.statMedium}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-yellow-400">{lowAlerts.length}</div>
-            <div className="text-xs text-neutral-400 mt-0.5">Low</div>
+            <div className="text-xs text-neutral-400 mt-0.5">{t.monitoring.statLow}</div>
           </CardContent>
         </Card>
       </div>
@@ -309,8 +320,8 @@ export default function MonitoringPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <Activity className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
-              <p className="text-sm text-neutral-400">Enter a Bitcoin address above to start monitoring.</p>
-              <p className="text-xs text-neutral-500 mt-1">The engine will analyze transaction patterns for anomalies.</p>
+              <p className="text-sm text-neutral-400">{t.monitoring.emptyPrompt}</p>
+              <p className="text-xs text-neutral-500 mt-1">{t.monitoring.emptyDesc}</p>
             </CardContent>
           </Card>
         )}
@@ -319,9 +330,9 @@ export default function MonitoringPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
-              <p className="text-sm text-neutral-200 font-medium">No anomalies detected</p>
+              <p className="text-sm text-neutral-200 font-medium">{t.monitoring.noAlertsTitle}</p>
               <p className="text-xs text-neutral-400 mt-1">
-                {txCount} transactions analyzed — all within normal parameters.
+                {txCount} {t.monitoring.noAlertsDesc}
               </p>
             </CardContent>
           </Card>
@@ -341,14 +352,33 @@ export default function MonitoringPage() {
         <CardContent className="p-4">
           <CardTitle className="text-xs font-semibold text-neutral-300 mb-2 flex items-center gap-1.5">
             <ShieldAlert className="w-3.5 h-3.5 text-[#f7931a]" />
-            Detection Rules Active
+            {t.monitoring.rulesActive}
           </CardTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-neutral-400">
-            <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Large Amount (5× rolling mean)</div>
-            <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> High Frequency (&gt;5 txs / 24h)</div>
-            <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Dust Attack (&lt;546 sats)</div>
-            <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> Rapid Outflow (3+ txs / 1h)</div>
-            <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-emerald-500" /> New Destination Address</div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{walletTier === 'small' ? t.monitoring.ruleLargeAmountSmall : t.monitoring.ruleLargeAmountWhale}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{t.monitoring.ruleHighFrequency}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{t.monitoring.ruleDustAttack}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{t.monitoring.ruleRapidOutflow}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{t.monitoring.ruleFeeOverpayment}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+              <span>{t.monitoring.ruleNewAddress}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
