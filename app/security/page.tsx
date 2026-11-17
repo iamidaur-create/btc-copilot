@@ -64,7 +64,7 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      {/* Interactive Anti-Scam Address Verifier (Zafy-Style Guardian) */}
+      {/* Interactive Anti-Scam Address Verifier */}
       <Card className="border-amber-500/20 bg-gradient-to-b from-[#12141c] to-[#0a0c12]">
         <CardHeader>
           <div className="flex items-center justify-between">

@@ -1,5 +1,5 @@
 /**
- * Security & Anti-Scam Database (Zafy-style guardian)
+ * Security & Anti-Scam Database (BTC Copilot Guardian)
  *
  * Implements address verification with 4 explicit statuses:
  * - risk_identified: Match found in known scam/hack databases

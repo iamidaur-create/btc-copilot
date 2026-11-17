@@ -399,7 +399,7 @@ export const translations: Record<Language, Translations> = {
     },
     security: {
       title: 'Centre de Sécurité & Bouclier Anti-Arnaque',
-      subtitle: 'Zéro gestion de clés privées, passerelle de confidentialité stricte et vérification des risques connus (Zafy).',
+      subtitle: 'Zéro gestion de clés privées, passerelle de confidentialité stricte et vérification des risques connus.',
       badge: 'Protection Lecture Seule',
       readOnlyTitle: 'Garantie 100% Lecture Seule',
       readOnlyDesc: 'BTC Copilot ne demande, ne stocke ni ne manipule aucune clé privée, seed phrase ou mot de passe. Aucune transaction ne peut être signée ou diffusée.',
@@ -418,7 +418,7 @@ export const translations: Record<Language, Translations> = {
       badgeSanitized: 'Assaini',
       badgeYes: 'Oui (Sécurisé)',
       // Verification & Risk Guardian
-      riskVerifierTitle: 'Vérificateur d’Adresses & Détection de Risques (Style Zafy)',
+      riskVerifierTitle: 'Vérificateur d’Adresses & Détection de Risques',
       riskVerifierDesc: 'Vérifiez une adresse Bitcoin avant tout envoi sensible. Les résultats s’appuient sur des sources transparentes.',
       verifyInputPlaceholder: 'Collez une adresse Bitcoin à analyser (ex: bc1q..., 1..., 3...)',
       verifyBtn: 'Vérifier l’Adresse',
@@ -624,7 +624,7 @@ export const translations: Record<Language, Translations> = {
     },
     security: {
       title: 'Security Center & Risk Guardian',
-      subtitle: 'Zero private key handling, strict privacy gateway, and verified scam blacklist checking (Zafy).',
+      subtitle: 'Zero private key handling, strict privacy gateway, and verified scam blacklist checking.',
       badge: 'Read-Only Guard',
       readOnlyTitle: '100% Read-Only Guarantee',
       readOnlyDesc: 'BTC Copilot never requests, stores, or processes private keys, seed phrases, or wallet passwords. Transactions cannot be broadcast or signed.',
@@ -643,7 +643,7 @@ export const translations: Record<Language, Translations> = {
       badgeSanitized: 'Sanitized',
       badgeYes: 'Yes (Sanitized)',
       // Verification & Risk Guardian
-      riskVerifierTitle: 'Address & Risk Guardian (Zafy-style)',
+      riskVerifierTitle: 'Address & Risk Guardian',
       riskVerifierDesc: 'Verify any Bitcoin address before sending funds. Results are checked against verified scam databases.',
       verifyInputPlaceholder: 'Paste a Bitcoin address to check (e.g. bc1q..., 1..., 3...)',
       verifyBtn: 'Verify Address',
