@@ -1,7 +1,7 @@
 /**
  * Google Gemini provider for BTC Copilot
  * Uses native fetch directly against Gemini REST API
- * Used as automatic fallback when Mistral is unavailable or rate-limited.
+ * This is the sole external AI provider used by BTC Copilot.
  */
 
 export interface GeminiMessage {

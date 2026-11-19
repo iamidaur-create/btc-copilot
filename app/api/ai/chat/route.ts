@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       response,
       provider,
-      model: provider === 'mistral' ? 'mistral-large-latest' : 'gemini-2.0-flash',
+      model: provider === 'gemini' ? 'gemini-3.5-flash-lite' : 'deterministic-local',
     });
   } catch (err) {
     const error = err as { message: string };
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'AI provider not configured',
-          hint: 'Add MISTRAL_API_KEY or GEMINI_API_KEY to your .env.local file',
+          hint: 'Add GEMINI_API_KEY to your .env.local file',
         },
         { status: 503 }
       );

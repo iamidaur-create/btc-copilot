@@ -15,7 +15,7 @@
 - The application has **no transaction signing or broadcasting capability**.
 
 ### 1.2 Isolated Server-Side Credentials
-- All AI provider keys (`MISTRAL_API_KEY`, `GEMINI_API_KEY`) are stored in server-side environment variables.
+- The Gemini API key (`GEMINI_API_KEY`) is stored in a server-side environment variable.
 - No API keys are prefixed with `NEXT_PUBLIC_`. They are unreachable by the browser bundle or client devtools.
 
 ### 1.3 Untrusted Input Philosophy
@@ -26,13 +26,13 @@
 
 ## 2. Privacy Gateway Design
 
-External AI providers (Mistral, Google) receive only the minimum information necessary to explain a transaction or an anomaly alert:
+The external Gemini provider receives only the minimum information necessary to explain a transaction or an anomaly alert:
 
 | Information | Gateway Action | Rationale |
 |---|---|---|
 | Private Keys / Seed Phrases | **BLOCKED & REJECTED** | Instant abort if detected |
 | Public Addresses | **Truncated** (`1A1zP1...Divfna`) | Reduces linkability to external AI logs |
-| Transaction IDs (txid) | **Masked** (`Tx #1`) | Prevents chain surveillance by AI providers |
+| Transaction IDs (txid) | **Preserved** as public blockchain identifiers | Required for accurate, contextual transaction explanations |
 | Financial Amounts | **Sanitized numerical summaries** | Provides only data needed to explain fees/UTXO |
 | User Prompts | **Length-capped (500 chars) & sanitized** | Mitigates jailbreaks and prompt injections |
 

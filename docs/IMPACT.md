@@ -2,36 +2,36 @@
 
 ## 1. Cible Utilisateur Principale
 
-La cible prioritaire de BTC Copilot est constituée par les **commerçants de proximité, artisans et travailleurs indépendants** souhaitant accepter des paiements en Bitcoin et Lightning sans subir la complexité technique ni confier leurs clés à des banques ou plateformes custodiales centralisées.
+La cible prioritaire de BTC Copilot est constituée par les **particuliers, épargnants et utilisateurs débutants ou intermédiaires de Bitcoin** souhaitant comprendre leurs transactions, vérifier la sécurité de leurs adresses et éviter les pièges et arnaques sans confier leurs clés privées à un tiers.
 
 ---
 
 ## 2. Problème Concret Identifié
 
-Dans de nombreuses régions, l'adoption de Bitcoin au point de vente se heurte à trois barrières majeures :
-1. **L'incompréhension des délais et des frais** : Pourquoi une transaction on-chain met-elle 20 minutes ? Pourquoi les frais varient-ils ?
-2. **La peur de l'erreur financière** : L'angoisse de recevoir un montant erroné ou d'être victime d'une double dépense / dust attack.
-3. **Le manque de support d'assistance immédiat** : Un commerçant seul à sa caisse n'a personne pour lui expliquer un statut de paiement bloqué.
+Dans de nombreuses régions, l'adoption quotidienne de Bitcoin se heurte à trois barrières majeures :
+1. **L'incompréhension des délais et des frais** : Pourquoi une transaction on-chain met-elle 20 minutes ? Pourquoi les frais varient-ils selon la mempool ?
+2. **La peur de l'erreur ou de l'arnaque** : L'angoisse d'envoyer des fonds vers une mauvaise adresse, de subir une attaque de traçage (dust attack) ou de payer 25% de frais involontairement.
+3. **Le manque de support pédagogique fiable** : Un utilisateur isolé n'a personne pour lui expliquer simplement les termes techniques (UTXO, vBytes, RBF) sans jargon condescendant.
 
 ---
 
-## 3. Cas d'Usage Concret : Encaissement & Réconciliation au Point de Vente
+## 3. Cas d'Usage Concret : Surveillance & Accompagnement Pédagogique
 
 ```
-Commerçant / Client 
+Utilisateur / Adresse Publique
        │
        ▼
-Génération Facture Lightning via BTC Copilot (NWC)
+Analyse en lecture seule via BTC Copilot (Mempool Proxy)
        │
        ▼
-Client règle en 2 secondes avec son wallet mobile
+Audit instantané : Détection d'anomalies, poussières dust, santé du wallet
        │
        ▼
-BTC Copilot confirme la réception et notifie le commerçant
+L'assistant IA décrypte en direct les confirmations et les frais en langage clair
        │
        ▼
-En cas d'anomalie (montant inhabituel, frais anormaux on-chain) :
-L'IA explique immédiatement le phénomène en français/anglais sans jargon
+En cas de doute (adresse suspecte, frais excessifs) :
+Recommandation d'attente ou alternative Lightning Network à 1 satoshi
 ```
 
 ---

@@ -1,15 +1,12 @@
 /**
- * AI Provider Factory — Dual-provider orchestration layer with offline local fallback
+ * AI Provider Factory — Gemini orchestration with deterministic Bitcoin glossary.
  *
  * Strategy:
- * 1. Try Mistral Large (best quality) if MISTRAL_API_KEY is present
- * 2. If Mistral fails (429, 503, timeout) or key missing → try Gemini Flash if GEMINI_API_KEY is present
- * 3. If neither key is present → use intelligent local deterministic Bitcoin Copilot responder
- *
- * This ensures the assistant ALWAYS functions 100% of the time, even without external API keys!
+ * 1. Answer glossary, wallet-context and out-of-scope questions locally.
+ * 2. Send general Bitcoin analysis questions to Gemini only.
+ * 3. If Gemini is unavailable or not configured, report it clearly.
  */
 
-import { callMistral } from './providers/mistral';
 import { callGemini } from './providers/gemini';
 
 export type UserLevel = 'beginner' | 'professional';
@@ -125,10 +122,12 @@ ${levelInstruction}
 - Ne JAMAIS certifier qu'une adresse est "100% sans risque".
 - Ne jamais inventer de fausses transactions ou de faux soldes.
 ${contextSection}
-## Structure des explications de transaction :
-1. Action résumée factuellement (montant net, direction)
-2. Frais & statut de confirmation
-3. Recommandation ou vérification utile`
+## Règle de réponse
+- Réponds d'abord directement à la question posée.
+- N'utilise le format montant/frais/recommandation que pour une question portant réellement sur une transaction.
+- Ne cite un solde ou un txid que si la donnée est présente dans le contexte fourni.
+- Si l'information n'est pas disponible, indique qu'elle manque clairement.
+`
     : `You are BTC Copilot, an intelligent assistant specialized in Bitcoin and the Lightning Network.
 
 ## Main Role
@@ -148,10 +147,11 @@ ${levelInstruction}
 - NEVER claim an address is 100% safe.
 - Base answers on real provided data; never invent balances or transactions.
 ${contextSection}
-## Response Format:
-1. Direct summary of what happened
-2. Fee rate and confirmation status
-3. Factual advice or verification note`;
+## Response Rule:
+- Answer the actual question directly first.
+- Use the amount/fee/recommendation format only for transaction-specific questions.
+- Quote balances or txids only when present in the supplied context.
+- State clearly when required information is unavailable.`;
 }
 
 /** Local rule-based responder for offline/demo use when no API keys are configured */
@@ -164,7 +164,34 @@ function generateLocalResponse(
   const query = message.toLowerCase();
   const isFr = language === 'fr';
 
-  // 0. Out-of-scope guardrail check (e.g. Eiffel Tower, weather, recipes...)
+  // 0. Deterministic Bitcoin glossary
+  const glossary: Record<string, { fr: string; en: string }> = {
+    mempool: {
+      fr: 'La **mempool** est l’ensemble des transactions valides reçues par les nœuds mais pas encore incluses dans un bloc. Elle sert aussi à estimer les frais selon la demande actuelle.',
+      en: 'The **mempool** is the set of valid transactions received by nodes but not yet included in a block. Its fee distribution also helps estimate demand for block space.',
+    },
+    rbf: {
+      fr: 'Le **RBF (Replace-By-Fee)** permet à l’émetteur d’une transaction non confirmée de la remplacer par une version proposant des frais plus élevés.',
+      en: '**RBF (Replace-By-Fee)** lets the sender replace an unconfirmed transaction with a version that pays a higher fee.',
+    },
+    cpfp: {
+      fr: 'Le **CPFP (Child-Pays-for-Parent)** consiste à dépenser une sortie d’une transaction parente en attente avec des frais élevés, afin d’inciter les mineurs à confirmer les deux transactions.',
+      en: '**CPFP (Child-Pays-for-Parent)** spends an output from a pending parent transaction in a child transaction with a high fee, encouraging miners to confirm both.',
+    },
+    segwit: {
+      fr: 'Le **SegWit** est une amélioration du format des transactions Bitcoin qui sépare certaines données de signature, réduit le poids compté et prend en charge les formats P2WPKH/P2WSH.',
+      en: '**SegWit** separates signature data from some transaction fields, reduces virtual transaction weight, and enables P2WPKH/P2WSH formats.',
+    },
+    taproot: {
+      fr: 'Le **Taproot** est le format Bitcoin bc1p basé sur Bech32m. Il associe les clés Schnorr et les scripts MAST pour améliorer la confidentialité et l’efficacité des scripts complexes.',
+      en: '**Taproot** is the bc1p Bitcoin format based on Bech32m. It combines Schnorr keys and MAST scripts to improve privacy and efficiency for complex scripts.',
+    },
+  };
+  for (const [term, definition] of Object.entries(glossary)) {
+    if (query.includes(term)) return isFr ? definition.fr : definition.en;
+  }
+
+  // Out-of-scope guardrail check (e.g. Eiffel Tower, weather, recipes...)
   // Out-of-scope gentle redirection
   const outOfScopeKeywords = [
     'tour eiffel',
@@ -198,11 +225,16 @@ function generateLocalResponse(
   }
 
   // 2. Fee inquiries
-  if (query.includes('fee') || query.includes('frais') || query.includes('mempool') || query.includes('sat/vb') || query.includes('coût')) {
-    const rate = context?.feeRate ?? 14;
+  if (query.includes('fee') || query.includes('frais') || query.includes('sat/vb') || query.includes('coût') || query.includes('vbyte') || query.includes('vbytes')) {
+    const rate = context?.feeRate;
+    if (rate === undefined) {
+      return isFr
+        ? "Le taux de frais actuel n'est pas disponible dans le contexte chargé. Un **vbyte (vB)** est une unité virtuelle de poids utilisée pour mesurer la taille d'une transaction Bitcoin. Les frais s'évaluent en sat/vB : poids virtuel multiplié par le taux choisi."
+        : "The current fee rate is not available in the loaded context. A **vbyte (vB)** is a virtual weight unit used to measure a Bitcoin transaction. Fees are calculated in sat/vB: virtual transaction weight multiplied by the selected fee rate.";
+    }
     return isFr
-      ? `Les frais actuels sur le réseau Bitcoin sont d'environ **${rate} sat/vB** pour une confirmation standard.\n\nSur Bitcoin, les frais dépendent du poids en octets virtuels (vBytes) de la transaction et de la saturation du mempool, et non du montant envoyé.`
-      : `Current Bitcoin network fee rates are approximately **${rate} sat/vB** for standard confirmation priority.\n\nBitcoin transaction fees depend on transaction weight in vBytes and mempool demand, not on the monetary amount transferred.`;
+      ? `Le taux de frais fourni par le contexte est de **${rate} sat/vB**. Sur Bitcoin, les frais dépendent du poids virtuel de la transaction et de la saturation du mempool, et non du montant envoyé.`
+      : `The fee rate supplied by the context is **${rate} sat/vB**. Bitcoin transaction fees depend on virtual transaction weight and mempool demand, not on the amount transferred.`;
   }
 
   // 3. Unconfirmed transactions / pending
@@ -233,55 +265,34 @@ function generateLocalResponse(
       : `Bitcoin supports 4 primary address formats:\n- **Legacy (1...)**: Original P2PKH script.\n- **P2SH (3...)**: Script hash, typically multisig.\n- **Native SegWit (bc1q...)**: Bech32 v0, lowers fees by ~30%.\n- **Taproot (bc1p...)**: Bech32m v1, utilizing Schnorr signatures and Tapscript.`;
   }
 
-  // 7. General fallback
-  const addr = context?.walletAddress ? `\`${context.walletAddress}\`` : (isFr ? 'Wallet Démo' : 'Demo Wallet');
-  const bal = context?.balance !== undefined ? `${context.balance.toLocaleString()} sats` : (isFr ? 'Non chargé' : 'Not loaded');
-
+  // 7. General fallback: return to the Bitcoin wallet scope without inventing data
   return isFr
-    ? `Bonjour, je suis **BTC Copilot**.\n\nWallet actif : ${addr} (Solde : **${bal}**).\n\nVous pouvez m'interroger sur une transaction spécifique, l'état des frais mempool, les confirmations ou les mécanismes protocolaires de Bitcoin et Lightning.`
-    : `Hello, I am **BTC Copilot**.\n\nActive wallet: ${addr} (Balance: **${bal}**).\n\nYou can ask me about specific transactions, current mempool fees, confirmations, or Bitcoin and Lightning mechanics.`;
+    ? 'Je peux répondre sur Bitcoin, Lightning, votre portefeuille chargé, ses transactions et ses risques. Pour toute autre question, revenons à l’adresse ou à la transaction que vous souhaitez analyser.'
+    : 'I can answer questions about Bitcoin, Lightning, your loaded wallet, transactions, and risks. For unrelated topics, let us return to the address or transaction you want to analyze.';
 }
 
-/** Main entry point — tries Mistral, then Gemini, then local intelligent fallback */
+/** Main entry point — Gemini primary, local autonomous fallback only if API fails */
 export async function generateAIResponse(
   messages: ChatMessage[],
   level: UserLevel,
   context: ChatContext | null,
   language: Language = 'fr'
-): Promise<{ response: string; provider: 'mistral' | 'gemini' | 'local' }> {
+): Promise<{ response: string; provider: 'gemini' | 'local' }> {
   const systemPrompt = buildSystemPrompt(level, context, language);
   const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content ?? '';
 
-  // 1. Try Mistral first (if key configured)
-  if (process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY.trim() !== '') {
-    try {
-      const response = await callMistral(
-        messages.map((m) => ({ role: m.role, content: m.content })),
-        systemPrompt
-      );
-      return { response, provider: 'mistral' };
-    } catch (err) {
-      const error = err as { status?: number; message?: string };
-      if (error.status === 401) {
-        console.warn('[AI] Mistral key invalid, attempting fallback.');
-      } else {
-        console.warn('[AI] Mistral error, falling back to Gemini:', error.message);
-      }
-    }
-  }
-
-  // 2. Try Gemini fallback (if key configured)
+  // 1. Try Gemini first (live intelligence)
   if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== '') {
     try {
       const response = await callGemini(messages, systemPrompt);
       return { response, provider: 'gemini' };
     } catch (err) {
       const error = err as { message?: string };
-      console.warn('[AI] Gemini error, falling back to local engine:', error.message);
+      console.warn('[AI] Gemini call failed, engaging local fallback engine:', error.message);
     }
   }
 
-  // 3. Autonomous Local Engine (always succeeds, zero keys required)
+  // 2. Local fallback engine (only if Gemini API is unreachable)
   const localResponse = generateLocalResponse(lastUserMessage, level, context, language);
   return { response: localResponse, provider: 'local' };
 }

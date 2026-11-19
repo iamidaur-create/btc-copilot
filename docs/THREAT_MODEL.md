@@ -13,7 +13,7 @@ L'application n'est pas un portefeuille custodial. Elle ne conserve aucun fond u
 | Actif | Criticité | Description |
 | :--- | :---: | :--- |
 | **Secret de connexion NWC** | **TRÈS HAUTE** | La chaîne `nostr+walletconnect://...` contient la clé secrète partagée chiffrant les ordres NIP-47 vers le wallet distant. |
-| **Clés d'API IA (Mistral & Gemini)** | **HAUTE** | Clés hébergées sur le serveur permettant d'interroger les modèles sans quota abuse. |
+| **Clé d'API IA Gemini** | **HAUTE** | Clé hébergée sur le serveur permettant d'interroger le modèle sans l'exposer au navigateur. |
 | **Données de transaction utilisateur** | **MOYENNE** | Adresses publiques, montants et horodatages. Doivent être protégées de toute fuite vers des tiers non sollicités. |
 
 ---

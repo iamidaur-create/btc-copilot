@@ -26,7 +26,7 @@ Understanding Bitcoin transactions, UTXO consolidation, script types (Legacy, Se
 | **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Lucide Icons, Recharts |
 | **Backend** | Next.js Server-Side Route Handlers, TypeScript |
 | **Blockchain** | Mempool.space REST APIs (On-chain & Lightning Network) |
-| **AI Providers** | **Mistral AI** (Primary) + **Google Gemini AI** (Automatic Fallback) |
+| **AI Provider** | **Google Gemini AI** with deterministic Bitcoin responses |
 | **Privacy** | Built-in Privacy Gateway (Address truncation, regex scanning, injection defense) |
 | **Security** | 100% Read-Only, strictly server-side credentials, zero transaction signing |
 
@@ -53,7 +53,6 @@ cp .env.example .env.local
 
 Edit `.env.local` to configure your AI provider API keys:
 ```env
-MISTRAL_API_KEY=your_mistral_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 

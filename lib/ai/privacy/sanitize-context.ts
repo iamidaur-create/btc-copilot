@@ -11,16 +11,14 @@
  * NEVER transmit raw wallet credentials to an LLM.
  */
 
+import * as bip39 from 'bip39';
+
 /** Patterns that must NEVER reach an LLM */
 const DANGEROUS_PATTERNS: RegExp[] = [
   // WIF private keys (51-52 chars starting with 5, K or L)
   /\b[5KL][1-9A-HJ-NP-Za-km-z]{50,51}\b/g,
-  // BIP39 mnemonics (12/24 word sequences)
-  /\b(?:[a-z]+\s){11,23}[a-z]+\b/gi,
   // NWC connection strings
   /nostr\+walletconnect:\/\/[^\s"']+/gi,
-  // Hex private keys (64 hex chars)
-  /\b[0-9a-fA-F]{64}\b/g,
   // Extended private keys (xprv/zprv/tprv)
   /\b(?:xprv|zprv|tprv|vprv)[1-9A-HJ-NP-Za-km-z]{100,}\b/g,
 ];
@@ -31,9 +29,27 @@ function truncateAddress(addr: string): string {
   return `${addr.slice(0, 8)}…${addr.slice(-4)}`;
 }
 
+/** Redact a sequence only when it validates as a 12- or 24-word BIP39 mnemonic. */
+function redactBip39Mnemonic(text: string): string {
+  return text.replace(/\b[a-z]+(?:[\s-]+[a-z]+){11,23}\b/gi, (match) => {
+    const words = match.trim().split(/[\s-]+/);
+    for (const length of [24, 12]) {
+      if (words.length >= length) {
+        for (let start = 0; start <= words.length - length; start += 1) {
+          const candidate = words.slice(start, start + length).join(' ');
+          if (bip39.validateMnemonic(candidate)) {
+            return '[REDACTED]';
+          }
+        }
+      }
+    }
+    return match;
+  });
+}
+
 /** Remove dangerous patterns from a string */
 function stripDangerous(text: string): string {
-  let result = text;
+  let result = redactBip39Mnemonic(text);
   for (const pattern of DANGEROUS_PATTERNS) {
     result = result.replace(pattern, '[REDACTED]');
   }

@@ -13,7 +13,7 @@ interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  provider?: 'mistral' | 'gemini' | 'local';
+  provider?: 'gemini' | 'local';
   isError?: boolean;
 }
 
@@ -191,7 +191,7 @@ export default function AssistantPage() {
       const rawText = await response.text();
       let data: {
         response?: string;
-        provider?: 'mistral' | 'gemini' | 'local';
+        provider?: 'gemini' | 'local';
         error?: string;
         hint?: string;
       } = {};
@@ -266,7 +266,7 @@ export default function AssistantPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-neutral-100">{t.assistant.title}</h1>
-            <Badge variant="btc">Gemini Flash + Fallback</Badge>
+            <Badge variant="btc">Gemini Flash</Badge>
           </div>
           <p className="text-sm text-neutral-400 mt-1">
             {t.assistant.subtitle}
@@ -361,11 +361,9 @@ export default function AssistantPage() {
                       <div className="pt-2 mt-2 border-t border-[#1e2230] flex items-center gap-1 text-[10px] text-neutral-500">
                         <Cpu className="w-3 h-3" />
                         <span>
-                          {msg.provider === 'mistral'
-                            ? 'Mistral Large'
-                            : msg.provider === 'gemini'
+                          {msg.provider === 'gemini'
                             ? 'Gemini Flash'
-                            : 'BTC Copilot Engine (Autonomous)'}
+                            : 'Réponse déterministe'}
                         </span>
                       </div>
                     )}
