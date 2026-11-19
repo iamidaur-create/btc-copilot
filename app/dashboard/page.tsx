@@ -237,6 +237,57 @@ export default function DashboardPage() {
             </Badge>
           </div>
 
+          {/* Persona Scenario Banner (if applicable) */}
+          {activeAddress === 'bc1qzg00x6y3s6j3w798lese4aklk5xe3xed5hzk9n' && (
+            <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="text-xl">🟢</span>
+                <div>
+                  <h4 className="text-xs font-bold text-emerald-300 uppercase tracking-wide">
+                    {language === 'fr' ? 'Profil Démo : Fatou (Épargne & Découverte Bitcoin)' : 'Demo Profile: Fatou (Bitcoin Savings & Learning)'}
+                  </h4>
+                  <p className="text-xs text-neutral-300 mt-0.5">
+                    {language === 'fr'
+                      ? 'Adresse SegWit propre (60 000 sats). Aucun risque détecté. Parfait pour tester l’explication pédagogique de l’IA.'
+                      : 'Clean SegWit address (60,000 sats). Zero risk detected. Perfect for testing AI plain-language education.'}
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => router.push('/assistant')}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white shrink-0 text-xs gap-1.5"
+              >
+                <span>💬 {language === 'fr' ? "Demander à l'IA" : "Ask AI"}</span>
+              </Button>
+            </div>
+          )}
+
+          {activeAddress === '13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94' && (
+            <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="text-xl">🟠</span>
+                <div>
+                  <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wide">
+                    {language === 'fr' ? 'Profil Démo : Moussa (Alerte Dust Attack & Risque)' : 'Demo Profile: Moussa (Dust Attack & Threat Alert)'}
+                  </h4>
+                  <p className="text-xs text-neutral-300 mt-0.5">
+                    {language === 'fr'
+                      ? 'Adresse Legacy ciblée par du dust (< 546 sats). BTC Copilot détecte l’attaque et prévient le désanonymat.'
+                      : 'Legacy address targeted by dust (< 546 sats). BTC Copilot alerts and prevents deanonymization.'}
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => router.push('/monitoring')}
+                className="bg-amber-600 hover:bg-amber-500 text-white shrink-0 text-xs gap-1.5"
+              >
+                <span>🛡️ {language === 'fr' ? "Voir la Surveillance" : "View Monitoring"}</span>
+              </Button>
+            </div>
+          )}
+
           {/* Stats cards + fee rates */}
           <WalletStats data={walletData} />
 

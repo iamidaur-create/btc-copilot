@@ -20,29 +20,17 @@ export function TopBar({
 
   return (
     <header className="h-16 border-b border-[#1a1e2b] bg-[#0d0f15]/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
-      {/* Left: Active Wallet Context */}
+      {/* Left: Mempool & Network Explorer */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#12141c] border border-[#1e2230]">
-          <span className="text-xs text-neutral-400 font-medium">{t.topBar.activeTarget}</span>
-          <span className="text-xs font-mono font-semibold text-neutral-200">
-            {truncateAddress(currentAddress, 8, 6)}
-          </span>
-          {isDemo && (
-            <Badge variant="btc" className="text-[10px] py-0 px-1.5">
-              {t.topBar.demoWallet}
-            </Badge>
-          )}
-        </div>
-
         <a
           href={`https://mempool.space/address/${currentAddress}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-neutral-400 hover:text-[#f7931a] flex items-center gap-1 transition-colors"
-          title="View on Mempool.space"
+          className="text-xs text-neutral-400 hover:text-[#f7931a] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#12141c] border border-[#1e2230] transition-colors"
+          title="Ouvrir sur Mempool.space"
         >
           <span>Mempool.space</span>
-          <ExternalLink className="w-3 h-3" />
+          <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
 
