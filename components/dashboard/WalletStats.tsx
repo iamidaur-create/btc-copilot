@@ -78,7 +78,7 @@ export function WalletStats({ data }: WalletStatsProps) {
           icon={<Wallet className="w-5 h-5" />}
           label={t.walletStats.confirmedBalance}
           value={confirmedBtc}
-          subValue={t.walletStats.confirmedSub}
+          subValue={`${balance.confirmed.toLocaleString()} sats`}
           accent
         />
         <StatCard
@@ -86,8 +86,8 @@ export function WalletStats({ data }: WalletStatsProps) {
           label={t.walletStats.pendingBalance}
           value={balance.unconfirmed !== 0 ? unconfirmedBtc : '0.00000000'}
           subValue={
-            stats.unconfirmedTxCount > 0
-              ? `${stats.unconfirmedTxCount} ${t.walletStats.inMempool}`
+            balance.unconfirmed !== 0
+              ? `${balance.unconfirmed.toLocaleString()} sats`
               : t.walletStats.noPending
           }
         />
@@ -95,7 +95,7 @@ export function WalletStats({ data }: WalletStatsProps) {
           icon={<ArrowDownLeft className="w-5 h-5" />}
           label={t.walletStats.totalReceived}
           value={totalReceivedBtc}
-          subValue={t.walletStats.lifetimeIncoming}
+          subValue={`${stats.totalReceived.toLocaleString()} sats entrants`}
         />
         <StatCard
           icon={<ArrowUpRight className="w-5 h-5" />}

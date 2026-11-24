@@ -166,6 +166,30 @@ function generateLocalResponse(
 
   // 0. Deterministic Bitcoin glossary
   const glossary: Record<string, { fr: string; en: string }> = {
+    sat: {
+      fr: 'Un **sat (satoshi)** est la plus petite unité divisible du Bitcoin. **1 Bitcoin = 100 000 000 satoshis**. C\'est l\'équivalent des centimes pour l\'euro, mais à une échelle beaucoup plus précise, indispensable pour les micropaiements sur le réseau Lightning.',
+      en: 'A **sat (satoshi)** is the smallest divisible unit of Bitcoin. **1 Bitcoin = 100,000,000 satoshis**. It serves as the primary denomination for daily transactions and Lightning micropayments.',
+    },
+    satoshi: {
+      fr: 'Le **satoshi (sat)** est l\'unité atomique de Bitcoin, nommée en hommage à Satoshi Nakamoto. 1 BTC équivaut à 100 millions de satoshis (0,00000001 BTC).',
+      en: 'A **satoshi (sat)** is the base unit of Bitcoin, named after Satoshi Nakamoto. 1 BTC equals 100 million satoshis (0.00000001 BTC).',
+    },
+    dust: {
+      fr: 'Le **dust (poussière)** désigne un montant de satoshis si infime (généralement inférieur à 546 sats) que les frais nécessaires pour le dépenser dépassent sa valeur. Une **attaque dust** consiste à envoyer ces micro-montants à des adresses pour tenter de tracer l\'identité et les dépenses de leurs propriétaires.',
+      en: '**Dust** refers to an amount of satoshis so small (typically under 546 sats) that network fees to spend it exceed its value. A **dust attack** sends microscopic amounts to track and deanonymize wallet owners.',
+    },
+    nostr: {
+      fr: '**Nostr** est un protocole de communication décentralisé et résistant à la censure. Dans BTC Copilot, nous utilisons la spécification **NWC (Nostr Wallet Connect - NIP-47)** pour dialoguer avec votre nœud Lightning à travers des relais chiffrés, sans jamais exposer ni détenir votre clé privée.',
+      en: '**Nostr** is a decentralized, censorship-resistant messaging protocol. BTC Copilot utilizes **NIP-47 (Nostr Wallet Connect)** to communicate with your Lightning node over encrypted relays without ever holding your private keys.',
+    },
+    nwc: {
+      fr: '**NWC (Nostr Wallet Connect - NIP-47)** est un standard ouvert permettant à une application de demander des actions à un portefeuille Lightning (consulter le solde, créer une facture) via des requêtes chiffrées de bout en bout, avec des plafonds de sécurité définis par l\'utilisateur.',
+      en: '**NWC (Nostr Wallet Connect - NIP-47)** is an open standard allowing applications to interact with Lightning wallets via end-to-end encrypted Nostr events with fine-grained spend permissions.',
+    },
+    halving: {
+      fr: 'Le **halving** est un événement programmé dans le protocole Bitcoin tous les 210 000 blocs (~4 ans), qui divise par deux la récompense de minage accordée aux mineurs. Il garantit la rareté programmée jusqu\'à la limite absolue de 21 millions de bitcoins.',
+      en: 'The **halving** is a programmatic event occurring every 210,000 blocks (~4 years) that cuts block subsidy rewards in half, enforcing Bitcoin\'s strict 21 million supply cap.',
+    },
     mempool: {
       fr: 'La **mempool** est l’ensemble des transactions valides reçues par les nœuds mais pas encore incluses dans un bloc. Elle sert aussi à estimer les frais selon la demande actuelle.',
       en: 'The **mempool** is the set of valid transactions received by nodes but not yet included in a block. Its fee distribution also helps estimate demand for block space.',

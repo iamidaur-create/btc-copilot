@@ -317,6 +317,104 @@ export function NWCWalletManager() {
                 </div>
               </div>
 
+              {/* Nostr NIP-47 Architecture & Security Visualizer */}
+              <div className="p-4 rounded-xl bg-[#0d0f17] border border-sky-500/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">⚡</span>
+                    <span className="text-xs font-bold text-sky-300 uppercase tracking-wider">
+                      Session Nostr NIP-47 Active (Zéro Clé Privée)
+                    </span>
+                  </div>
+                  <Badge variant="btc" className="text-[10px] py-0.5 px-2">
+                    E2EE Chiffré de bout en bout
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-2.5 rounded-lg bg-[#12141c] border border-[#1e2230]">
+                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Relais Nostr Connectés</span>
+                    <div className="text-[11px] text-neutral-300 font-mono mt-1 space-y-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>wss://relay.damus.io</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>wss://relay.getalby.com</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-[#12141c] border border-[#1e2230]">
+                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Plafond de Sécurité NIP-47</span>
+                    <div className="text-[11px] text-emerald-400 font-semibold mt-1">
+                      Max 50 000 sats / jour
+                    </div>
+                    <p className="text-[10px] text-neutral-500 mt-0.5">
+                      Contrôlé côté client par votre nœud
+                    </p>
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-[#12141c] border border-[#1e2230]">
+                    <span className="text-[10px] text-neutral-500 uppercase font-bold">Événements Nostr Utilisés</span>
+                    <div className="text-[11px] text-neutral-300 font-mono mt-1 space-y-0.5">
+                      <div>Kind 23194 (Requête NWC)</div>
+                      <div>Kind 23195 (Réponse NWC)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* L1 On-Chain vs Nostr Lightning Comparison Simulator */}
+              <div className="p-4 rounded-xl bg-[#12141c] border border-amber-500/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-neutral-200 uppercase tracking-wider flex items-center gap-1.5">
+                    <span>⚖️</span>
+                    <span>Comparatif Vitesse & Frais : On-Chain vs Lightning</span>
+                  </span>
+                  <span className="text-[11px] text-neutral-500">Exemple : Café / Paiement 1 000 sats</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-lg bg-[#090a0f] border border-red-500/20 space-y-1.5">
+                    <div className="flex items-center justify-between font-bold text-neutral-300">
+                      <span>Réseau Bitcoin On-Chain (L1)</span>
+                      <span className="text-red-400">Lourd</span>
+                    </div>
+                    <div className="text-[11px] text-neutral-400 flex justify-between">
+                      <span>Délai de confirmation :</span>
+                      <strong className="text-neutral-200">10 à 60 minutes</strong>
+                    </div>
+                    <div className="text-[11px] text-neutral-400 flex justify-between">
+                      <span>Frais réseau estimés :</span>
+                      <strong className="text-red-400">~2 500 sats (~2,20 €)</strong>
+                    </div>
+                    <p className="text-[10px] text-neutral-500 pt-1">
+                      Inadapté pour les micropaiements quotidiens.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-[#090a0f] border border-emerald-500/30 space-y-1.5">
+                    <div className="flex items-center justify-between font-bold text-emerald-300">
+                      <span>Nostr Lightning NWC (L2)</span>
+                      <span className="text-emerald-400">Instantané</span>
+                    </div>
+                    <div className="text-[11px] text-neutral-400 flex justify-between">
+                      <span>Délai de règlement :</span>
+                      <strong className="text-emerald-400">&lt; 1 seconde</strong>
+                    </div>
+                    <div className="text-[11px] text-neutral-400 flex justify-between">
+                      <span>Frais de routage :</span>
+                      <strong className="text-emerald-400">1 sat (&lt; 0,001 €)</strong>
+                    </div>
+                    <p className="text-[10px] text-emerald-500/80 pt-1">
+                      ✓ Idéal pour l'adoption locale et les dépenses de tous les jours.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Invoice Generation Section */}
               {walletInfo.methods.includes('make_invoice') && (
                 <div className="p-4 rounded-xl bg-[#12141c] border border-[#1e2230] space-y-4">
