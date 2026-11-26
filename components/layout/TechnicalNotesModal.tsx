@@ -8,7 +8,7 @@ export function TechnicalNotesModal() {
   const [activeTab, setActiveTab] = useState<'gemini' | 'cheikh'>('gemini');
 
   return (
-    <div className="fixed bottom-5 left-5 z-40 font-sans">
+    <div className="fixed bottom-5 right-5 z-40 font-sans">
       {/* Trigger Button - Minimalist and Clean */}
       {!isOpen && (
         <button
