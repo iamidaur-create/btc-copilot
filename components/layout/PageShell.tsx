@@ -3,6 +3,7 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
+import { TechnicalNotesModal } from './TechnicalNotesModal';
 
 interface PageShellProps {
   children: React.ReactNode;
@@ -27,6 +28,9 @@ export function PageShell({
           {children}
         </main>
       </div>
+
+      {/* Discreet Demo Notes Pill (Bottom-Left) */}
+      <TechnicalNotesModal />
     </div>
   );
 }
