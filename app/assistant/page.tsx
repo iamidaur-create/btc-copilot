@@ -439,6 +439,31 @@ export default function AssistantPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 space-y-2">
+              {/* Contextual Wallet Prompt (if a wallet is loaded) */}
+              {getWalletContext().walletAddress && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const ctx = getWalletContext();
+                    const addr = ctx.walletAddress;
+                    void sendMessage(
+                      language === 'fr'
+                        ? `Analyse mon portefeuille ${addr} : quel est mon solde, mes frais récents et y a-t-il des alertes de sécurité ?`
+                        : `Analyze my wallet ${addr}: what is my balance, recent fee rates, and are there any security alerts?`
+                    );
+                  }}
+                  disabled={loading}
+                  className="w-full text-left p-2.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 transition-all cursor-pointer font-medium leading-snug disabled:opacity-50"
+                >
+                  <span className="font-semibold block text-amber-300">
+                    {language === 'fr' ? '⚡ Analyser le portefeuille actif' : '⚡ Analyze active wallet'}
+                  </span>
+                  <span className="text-[10px] text-neutral-400 font-mono">
+                    {getWalletContext().walletAddress?.slice(0, 16)}...
+                  </span>
+                </button>
+              )}
+
               {t.assistant.suggested.map((q, idx) => (
                 <button
                   key={idx}

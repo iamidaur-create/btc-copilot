@@ -239,9 +239,9 @@ export default function DashboardPage() {
 
           {/* Persona Scenario Banner (if applicable) */}
           {activeAddress === 'bc1qzg00x6y3s6j3w798lese4aklk5xe3xed5hzk9n' && (
-            <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-xl bg-[#0f1418] border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <span className="text-xl">🟢</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
                 <div>
                   <h4 className="text-xs font-bold text-emerald-300 uppercase tracking-wide">
                     {language === 'fr' ? 'Profil Démo : Fatou (Épargne & Découverte Bitcoin)' : 'Demo Profile: Fatou (Bitcoin Savings & Learning)'}
@@ -256,17 +256,17 @@ export default function DashboardPage() {
               <Button
                 size="sm"
                 onClick={() => router.push('/assistant')}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white shrink-0 text-xs gap-1.5"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white shrink-0 text-xs"
               >
-                <span>💬 {language === 'fr' ? "Demander à l'IA" : "Ask AI"}</span>
+                <span>{language === 'fr' ? "Demander à l'IA" : "Ask AI"}</span>
               </Button>
             </div>
           )}
 
           {activeAddress === '13AM4VW2dhxYgXeQepoHkHSQuy6NgaEb94' && (
-            <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-xl bg-[#171310] border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <span className="text-xl">🟠</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 mt-1 shrink-0" />
                 <div>
                   <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wide">
                     {language === 'fr' ? 'Profil Démo : Moussa (Alerte Dust Attack & Risque)' : 'Demo Profile: Moussa (Dust Attack & Threat Alert)'}
@@ -281,9 +281,9 @@ export default function DashboardPage() {
               <Button
                 size="sm"
                 onClick={() => router.push('/monitoring')}
-                className="bg-amber-600 hover:bg-amber-500 text-white shrink-0 text-xs gap-1.5"
+                className="bg-amber-600 hover:bg-amber-500 text-white shrink-0 text-xs"
               >
-                <span>🛡️ {language === 'fr' ? "Voir la Surveillance" : "View Monitoring"}</span>
+                <span>{language === 'fr' ? "Voir la Surveillance" : "View Monitoring"}</span>
               </Button>
             </div>
           )}

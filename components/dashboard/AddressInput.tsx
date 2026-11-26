@@ -144,11 +144,11 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
               onAddressSubmit(addr);
             }}
             disabled={isLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/30 hover:bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 text-xs transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#12141c] hover:bg-[#181b24] text-neutral-200 border border-[#1e2230] hover:border-emerald-500/40 text-xs transition-colors disabled:opacity-50"
           >
-            <span>🟢</span>
-            <span className="font-semibold">Fatou</span>
-            <span className="text-[10px] text-emerald-400/80">(Épargne & Découverte)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="font-semibold text-neutral-100">Fatou</span>
+            <span className="text-[10px] text-neutral-400">Épargne & Découverte</span>
           </button>
 
           <button
@@ -159,20 +159,20 @@ export function AddressInput({ onAddressSubmit, isLoading = false, currentAddres
               onAddressSubmit(addr);
             }}
             disabled={isLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/30 hover:bg-amber-900/40 text-amber-300 border border-amber-500/30 text-xs transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#12141c] hover:bg-[#181b24] text-neutral-200 border border-[#1e2230] hover:border-amber-500/40 text-xs transition-colors disabled:opacity-50"
           >
-            <span>🟠</span>
-            <span className="font-semibold">Moussa</span>
-            <span className="text-[10px] text-amber-400/80">(Alerte Dust & Risque)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            <span className="font-semibold text-neutral-100">Moussa</span>
+            <span className="text-[10px] text-neutral-400">Alerte Dust & Risque</span>
           </button>
 
           <a
             href="/lightning"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-950/30 hover:bg-sky-900/40 text-sky-300 border border-sky-500/30 text-xs transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#12141c] hover:bg-[#181b24] text-neutral-200 border border-[#1e2230] hover:border-sky-500/40 text-xs transition-colors"
           >
-            <span>⚡</span>
-            <span className="font-semibold">Cheikh</span>
-            <span className="text-[10px] text-sky-400/80">(Lightning NWC)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+            <span className="font-semibold text-neutral-100">Cheikh</span>
+            <span className="text-[10px] text-neutral-400">Lightning NWC</span>
           </a>
         </div>
       </div>
